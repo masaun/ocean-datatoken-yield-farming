@@ -16,8 +16,8 @@
 
 ## 【Remarks】
 - Version
-  - Solidity (Solc): v0.5.16
-  - @openzeppelin/contracts: v2.5.1
+  - Solidity (Solc): v0.5.7
+  - openzeppelin-solidity: v2.5.0
 
 &nbsp;
 
