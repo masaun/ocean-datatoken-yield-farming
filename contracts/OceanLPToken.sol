@@ -7,11 +7,11 @@ import { ERC20Detailed } from "openzeppelin-solidity/contracts/token/ERC20/ERC20
 
 
 /***
- * @title - Ocean Governance Token contract
+ * @title - Ocean Pool Token (LP token) contract that represents a pair (OCEAN - DataToken)
  **/
-contract OceanGovernanceToken is ERC20, ERC20Detailed {
+contract OceanLPToken is ERC20, ERC20Detailed {
 
-    constructor() public ERC20Detailed("Ocean Governance Token", "OGT", 18) {}
+    constructor() public ERC20Detailed("Ocean Liquidity Provider Token", "OLP", 18) {}
 
     function mint(address to, uint mintAmount) public returns (bool) {
         _mint(to, mintAmount);
