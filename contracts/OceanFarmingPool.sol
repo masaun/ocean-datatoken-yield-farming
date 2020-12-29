@@ -23,6 +23,10 @@ contract OceanFarmingPool {
         oceanGovernanceToken = _oceanGovernanceToken;
     }
 
+    /***
+     * @notice - A user stake BToken    
+     * @param _bToken - BToken should be a pair of Ocean and DataToken
+     **/
     function stake(BToken _bToken, uint stakedBTokenAmount) public returns (bool) {
         BToken bToken = _bToken;
         bToken.transferFrom(msg.sender, address(this), stakedBTokenAmount);
@@ -30,14 +34,24 @@ contract OceanFarmingPool {
         oceanLPToken.mint(msg.sender, stakedBTokenAmount);
     }
 
+    /***
+     * @notice - A user un-stake BToken
+     * @param _bToken - BToken should be a pair of Ocean and DataToken
+     **/
     function unStake(BToken _bToken, uint unStakedBTokenAmount) public returns (bool) {
         oceanLPToken.burn(msg.sender, unStakedBTokenAmount);
 
         BToken bToken = _bToken;
         bToken.transfer(msg.sender, unStakedBTokenAmount);
     
-        uint rewardAmount;  /// [Todo]: Compute rewards amount
+        uint rewardAmount = _computeRewardAmount();  /// [Todo]: Compute rewards amount
         oceanGovernanceToken.mint(msg.sender, rewardAmount);        
-    }    
+    }
+
+
+    /***
+     * @notice - Compute reward amount
+     **/
+    function _computeRewardAmount() internal returns (uint rewardAmount) {}
 
 }
