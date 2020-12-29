@@ -7,10 +7,18 @@ import { ERC20Detailed } from "openzeppelin-solidity/contracts/token/ERC20/ERC20
 
 
 /***
- * @title - Ocean Pool Token contract
+ * @title - Ocean Pool Token contract that represents a pair (OCEAN - DataToken)
  **/
 contract OceanPoolToken is ERC20, ERC20Detailed {
 
     constructor() public ERC20Detailed("Ocean Pool Token", "OPT", 18) {}
+
+    function mint(address to, uint mintAmount) public returns (bool) {
+        _mint(to, mintAmount);
+    }
+
+    function burn(address to, uint burnAmount) public returns (bool) {
+        _burn(to, burnAmount);
+    }
 
 }
