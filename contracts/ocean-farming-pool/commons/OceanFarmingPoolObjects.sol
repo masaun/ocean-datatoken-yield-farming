@@ -17,4 +17,9 @@ contract OceanFarmingPoolObjects {
         uint amount;
     }
 
+    struct PoolData {
+        address addr;
+        uint amount;
+    }
+
 }

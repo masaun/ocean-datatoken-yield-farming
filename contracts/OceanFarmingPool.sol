@@ -5,7 +5,7 @@ pragma experimental ABIEncoderV2;
 import { OceanFarmingPoolStorages } from "./ocean-farming-pool/commons/OceanFarmingPoolStorages.sol";
 
 /// Balancer
-import { BToken } from "./ocean/balancer/BToken.sol";
+import { BToken } from "./ocean-v3/balancer/BToken.sol";
 
 /// Ocean
 import { OceanLPToken } from "./OceanLPToken.sol";
