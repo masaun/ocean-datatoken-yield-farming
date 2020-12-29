@@ -3,6 +3,7 @@ pragma experimental ABIEncoderV2;
 
 /// Storage
 import { OceanFarmingPoolStorages } from "./ocean-farming-pool/commons/OceanFarmingPoolStorages.sol";
+import { OceanFarmingPoolEvents } from "./OceanFarmingPoolEvents.sol";
 
 /// Balancer
 import { BToken } from "./ocean-v3/balancer/BToken.sol";
@@ -16,7 +17,7 @@ import { OceanGovernanceToken } from "./OceanGovernanceToken.sol";
  * @title - Ocean Farming Pool contract that supply the Ocean Governance Token (OGT) as rewards to stakers.
  * @dev - msg.sender is a staker.
  **/
-contract OceanFarmingPool is OceanFarmingPoolStorages {
+contract OceanFarmingPool is OceanFarmingPoolStorages, OceanFarmingPoolEvents {
 
     OceanLPToken public oceanLPToken;
     OceanGovernanceToken public oceanGovernanceToken;

@@ -7,19 +7,17 @@ pragma experimental ABIEncoderV2;
  **/
 contract OceanFarmingPoolObjects {
 
-    struct Staker {
-        address addr;
-        uint amount;
+    struct UserInfo {
+        uint256 amount;                 // How many LP tokens the user has provided.
+        uint256 rewardDebt;             // Reward debt. See explanation below.
     }
 
-    struct StakeData {
-        address addr;
-        uint amount;
+    struct PoolInfo {
+        IERC20 lpToken;                 // Address of LP token contract.
+        uint256 allocPoint;             // How many allocation points assigned to this pool.
+        uint256 lastRewardBlock;        // Last block number that MARK distribution occured.
+        uint256 accMarkPerShare;        // Accumulated MARK per share, times 1e12. See below.
     }
 
-    struct PoolData {
-        address addr;
-        uint amount;
-    }
 
 }
