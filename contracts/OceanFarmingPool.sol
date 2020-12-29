@@ -1,6 +1,10 @@
 pragma solidity ^0.5.7;
 pragma experimental ABIEncoderV2;
 
+/// Balancer
+import { BToken } from "./ocean/balancer/BToken.sol";
+
+/// Ocean
 import { OceanLPToken } from "./OceanLPToken.sol";
 import { OceanGovernanceToken } from "./OceanGovernanceToken.sol";
 
@@ -11,20 +15,26 @@ import { OceanGovernanceToken } from "./OceanGovernanceToken.sol";
  **/
 contract OceanFarmingPool {
 
+    OceanLPToken public oceanLPToken;
     OceanGovernanceToken public oceanGovernanceToken;
 
-    constructor(OceanGovernanceToken _oceanGovernanceToken) public {
+    constructor(OceanLPToken _oceanLPToken, OceanGovernanceToken _oceanGovernanceToken) public {
+        oceanLPToken = _oceanLPToken;
         oceanGovernanceToken = _oceanGovernanceToken;
     }
 
-    function stake(OceanLPToken _oceanLPToken, uint stakedLpTokenAmount) public returns (bool) {
-        OceanLPToken oceanLPToken = _oceanLPToken;
-        oceanLPToken.transferFrom(msg.sender, address(this), stakedLpTokenAmount);
+    function stake(BToken _bToken, uint stakedBTokenAmount) public returns (bool) {
+        BToken bToken = _bToken;
+        bToken.transferFrom(msg.sender, address(this), stakedBTokenAmount);
+
+        oceanLPToken.mint(msg.sender, stakedBTokenAmount);
     }
 
-    function unStake(OceanLPToken _oceanLPToken, uint unStakedLpTokenAmount) public returns (bool) {
-        OceanLPToken oceanLPToken = _oceanLPToken;
-        oceanLPToken.transfer(msg.sender, unStakedLpTokenAmount);
+    function unStake(BToken _bToken, uint unStakedBTokenAmount) public returns (bool) {
+        oceanLPToken.burn(msg.sender, unStakedBTokenAmount);
+
+        BToken bToken = _bToken;
+        bToken.transfer(msg.sender, unStakedBTokenAmount);
     
         uint rewardAmount;  /// [Todo]: Compute rewards amount
         oceanGovernanceToken.mint(msg.sender, rewardAmount);        
