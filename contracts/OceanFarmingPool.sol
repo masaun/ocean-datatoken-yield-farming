@@ -1,6 +1,9 @@
 pragma solidity ^0.5.7;
 pragma experimental ABIEncoderV2;
 
+/// Storage
+import { OceanFarmingPoolStorages } from "./ocean-farming-pool/commons/OceanFarmingPoolStorages.sol";
+
 /// Balancer
 import { BToken } from "./ocean/balancer/BToken.sol";
 
@@ -13,7 +16,7 @@ import { OceanGovernanceToken } from "./OceanGovernanceToken.sol";
  * @title - Ocean Farming Pool contract that supply the Ocean Governance Token (OGT) as rewards to stakers.
  * @dev - msg.sender is a staker.
  **/
-contract OceanFarmingPool {
+contract OceanFarmingPool is OceanFarmingPoolStorages {
 
     OceanLPToken public oceanLPToken;
     OceanGovernanceToken public oceanGovernanceToken;
@@ -52,6 +55,8 @@ contract OceanFarmingPool {
     /***
      * @notice - Compute reward amount
      **/
-    function _computeRewardAmount() internal returns (uint rewardAmount) {}
+    function _computeRewardAmount() internal returns (uint rewardAmount) {
+        /// [Todo]: Write a logic for computing reward amount
+    }
 
 }
