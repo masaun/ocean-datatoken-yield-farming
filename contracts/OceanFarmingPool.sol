@@ -23,15 +23,19 @@ import { OceanGovernanceToken } from "./OceanGovernanceToken.sol";
  * @dev - msg.sender is a staker.
  **/
 contract OceanFarmingPool is OceanFarmingPoolStorages, OceanFarmingPoolEvents {
-    using SafeMath for uint256;
+    using SafeMath for uint;
     using SafeERC20 for IERC20;
 
     OceanLPToken public oceanLPToken;
     OceanGovernanceToken public oceanGovernanceToken;
 
-    constructor(OceanLPToken _oceanLPToken, OceanGovernanceToken _oceanGovernanceToken) public {
+    constructor(OceanLPToken _oceanLPToken, OceanGovernanceToken _oceanGovernanceToken, uint _markPerBlock, uint _startBlock, uint _endBlock) public {
         oceanLPToken = _oceanLPToken;
         oceanGovernanceToken = _oceanGovernanceToken;
+
+        markPerBlock = _markPerBlock;
+        startBlock = _startBlock;
+        endBlock = _endBlock;
     }
 
     /***
