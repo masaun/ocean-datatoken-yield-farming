@@ -1,9 +1,14 @@
 pragma solidity ^0.5.7;
 pragma experimental ABIEncoderV2;
 
+/// [Note]: Using openzeppelin-solidity v2.4.0
+import { SafeMath } from "openzeppelin-solidity/contracts/math/SafeMath.sol";
+import { SafeERC20 } from "openzeppelin-solidity/contracts/token/ERC20/SafeERC20.sol";
+import { IERC20 } from "openzeppelin-solidity/contracts/token/ERC20/IERC20.sol";
+
 /// Storage
 import { OceanFarmingPoolStorages } from "./ocean-farming-pool/commons/OceanFarmingPoolStorages.sol";
-import { OceanFarmingPoolEvents } from "./OceanFarmingPoolEvents.sol";
+import { OceanFarmingPoolEvents } from "./ocean-farming-pool/commons/OceanFarmingPoolEvents.sol";
 
 /// Balancer
 import { BToken } from "./ocean-v3/balancer/BToken.sol";
@@ -18,6 +23,8 @@ import { OceanGovernanceToken } from "./OceanGovernanceToken.sol";
  * @dev - msg.sender is a staker.
  **/
 contract OceanFarmingPool is OceanFarmingPoolStorages, OceanFarmingPoolEvents {
+    using SafeMath for uint256;
+    using SafeERC20 for IERC20;
 
     OceanLPToken public oceanLPToken;
     OceanGovernanceToken public oceanGovernanceToken;
@@ -59,5 +66,7 @@ contract OceanFarmingPool is OceanFarmingPoolStorages, OceanFarmingPoolEvents {
     function _computeRewardAmount() internal returns (uint rewardAmount) {
         /// [Todo]: Write a logic for computing reward amount
     }
+
+
 
 }

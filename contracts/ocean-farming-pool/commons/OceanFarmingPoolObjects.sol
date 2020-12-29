@@ -1,6 +1,9 @@
 pragma solidity ^0.5.7;
 pragma experimental ABIEncoderV2;
 
+/// [Note]: Using openzeppelin-solidity v2.4.0
+import { IERC20 } from "openzeppelin-solidity/contracts/token/ERC20/IERC20.sol";
+
 
 /***
  * @title - OceanFarmingPoolObjects
