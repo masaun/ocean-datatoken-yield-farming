@@ -15,7 +15,7 @@ import { OceanFarmingPoolEvents } from "./ocean-farming-pool/commons/OceanFarmin
 import { BToken } from "./ocean-v3/balancer/BToken.sol";
 
 /// Ocean
-import { OceanLPToken } from "./OceanLPToken.sol";
+import { OceanFarmingToken } from "./OceanFarmingToken.sol";
 import { OceanGovernanceToken } from "./OceanGovernanceToken.sol";
 
 
@@ -23,15 +23,15 @@ import { OceanGovernanceToken } from "./OceanGovernanceToken.sol";
  * @title - Ocean Farming Pool contract that supply the Ocean Governance Token (OGT) as rewards to stakers.
  * @dev - msg.sender is a staker.
  **/
-contract OceanFarmingPool is OceanFarmingPoolStorages, OceanFarmingPoolEvents, Ownable  {
+contract OceanFarmingPool is OceanFarmingPoolStorages, OceanFarmingPoolEvents, Ownable {
     using SafeMath for uint;
     using SafeERC20 for IERC20;
 
-    OceanLPToken public oceanLPToken;
+    OceanFarmingToken public oceanFarmingToken;
     OceanGovernanceToken public oceanGovernanceToken;
 
-    constructor(OceanLPToken _oceanLPToken, OceanGovernanceToken _oceanGovernanceToken, uint _oceanGovernanceTokenPerBlock, uint _startBlock, uint _endBlock) public {
-        oceanLPToken = _oceanLPToken;
+    constructor(OceanFarmingToken _oceanFarmingToken, OceanGovernanceToken _oceanGovernanceToken, uint _oceanGovernanceTokenPerBlock, uint _startBlock, uint _endBlock) public {
+        oceanFarmingToken = _oceanFarmingToken;
         oceanGovernanceToken = _oceanGovernanceToken;
 
         oceanGovernanceTokenPerBlock = _oceanGovernanceTokenPerBlock;
@@ -47,7 +47,7 @@ contract OceanFarmingPool is OceanFarmingPoolStorages, OceanFarmingPoolEvents, O
         BToken bToken = _bToken;
         bToken.transferFrom(msg.sender, address(this), stakedBTokenAmount);
 
-        oceanLPToken.mint(msg.sender, stakedBTokenAmount);
+        oceanFarmingToken.mint(msg.sender, stakedBTokenAmount);
     }
 
     /***
@@ -55,7 +55,7 @@ contract OceanFarmingPool is OceanFarmingPoolStorages, OceanFarmingPoolEvents, O
      * @param _bToken - BToken should be a pair of Ocean and DataToken
      **/
     function unStake(BToken _bToken, uint unStakedBTokenAmount) public returns (bool) {
-        oceanLPToken.burn(msg.sender, unStakedBTokenAmount);
+        oceanFarmingToken.burn(msg.sender, unStakedBTokenAmount);
 
         BToken bToken = _bToken;
         bToken.transfer(msg.sender, unStakedBTokenAmount);
