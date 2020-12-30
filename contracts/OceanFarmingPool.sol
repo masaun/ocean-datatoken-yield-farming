@@ -2,6 +2,7 @@ pragma solidity ^0.5.7;
 pragma experimental ABIEncoderV2;
 
 /// [Note]: Using openzeppelin-solidity v2.4.0
+import { Ownable } from "openzeppelin-solidity/contracts/ownership/Ownable.sol";
 import { SafeMath } from "openzeppelin-solidity/contracts/math/SafeMath.sol";
 import { SafeERC20 } from "openzeppelin-solidity/contracts/token/ERC20/SafeERC20.sol";
 import { IERC20 } from "openzeppelin-solidity/contracts/token/ERC20/IERC20.sol";
@@ -22,7 +23,7 @@ import { OceanGovernanceToken } from "./OceanGovernanceToken.sol";
  * @title - Ocean Farming Pool contract that supply the Ocean Governance Token (OGT) as rewards to stakers.
  * @dev - msg.sender is a staker.
  **/
-contract OceanFarmingPool is OceanFarmingPoolStorages, OceanFarmingPoolEvents {
+contract OceanFarmingPool is OceanFarmingPoolStorages, OceanFarmingPoolEvents, Ownable  {
     using SafeMath for uint;
     using SafeERC20 for IERC20;
 
