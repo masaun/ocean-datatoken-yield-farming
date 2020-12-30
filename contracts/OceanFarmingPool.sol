@@ -43,25 +43,30 @@ contract OceanFarmingPool is OceanFarmingPoolStorages, OceanFarmingPoolEvents, O
      * @notice - A user stake BToken    
      * @param _bToken - BToken should be a pair of Ocean and DataToken
      **/
-    function stake(BToken _bToken, uint stakedBTokenAmount) public returns (bool) {
+    function stake(uint poolId, BToken _bToken, uint stakedBTokenAmount) public returns (bool) {
         BToken bToken = _bToken;
         bToken.transferFrom(msg.sender, address(this), stakedBTokenAmount);
-
+        
         oceanFarmingToken.mint(msg.sender, stakedBTokenAmount);
+
+        deposit(poolId, stakedBTokenAmount);
     }
 
     /***
      * @notice - A user un-stake BToken
      * @param _bToken - BToken should be a pair of Ocean and DataToken
      **/
-    function unStake(BToken _bToken, uint unStakedBTokenAmount) public returns (bool) {
+    function unStake(uint poolId, BToken _bToken, uint unStakedBTokenAmount) public returns (bool) {
         oceanFarmingToken.burn(msg.sender, unStakedBTokenAmount);
 
         BToken bToken = _bToken;
         bToken.transfer(msg.sender, unStakedBTokenAmount);
     
-        uint rewardAmount = _computeRewardAmount();  /// [Todo]: Compute rewards amount
-        oceanGovernanceToken.mint(msg.sender, rewardAmount);        
+        withdraw(poolId, unStakedBTokenAmount);
+
+        /// [Note]: 2 rows below may be replaced with the withdraw() method above.
+        //uint rewardAmount = _computeRewardAmount();  /// [Todo]: Compute rewards amount
+        //oceanGovernanceToken.mint(msg.sender, rewardAmount);        
     }
 
 
@@ -81,7 +86,7 @@ contract OceanFarmingPool is OceanFarmingPoolStorages, OceanFarmingPoolEvents, O
     /**
      * @dev Adds a new lp to the pool. Can only be called by the owner. DO NOT add the same LP token more than once.
      * @param _allocPoint How many allocation points to assign to this pool.
-     * @param _lpToken Address of LP token contract.
+     * @param _lpToken Address of LP token contract. (BToken inherit IERC20)
      * @param _withUpdate Whether to update all LP token contracts. Should be true if OceanGovernanceToken (OGToken) distribution has already begun.
      */
     function add(uint256 _allocPoint, IERC20 _lpToken, bool _withUpdate) public onlyOwner {
