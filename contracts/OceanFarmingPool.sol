@@ -30,7 +30,13 @@ contract OceanFarmingPool is OceanFarmingPoolStorages, OceanFarmingPoolEvents, O
     OceanFarmingToken public oceanFarmingToken;
     OceanGovernanceToken public oceanGovernanceToken;
 
-    constructor(OceanFarmingToken _oceanFarmingToken, OceanGovernanceToken _oceanGovernanceToken, uint _oceanGovernanceTokenPerBlock, uint _startBlock, uint _endBlock) public {
+    constructor(
+        OceanFarmingToken _oceanFarmingToken, 
+        OceanGovernanceToken _oceanGovernanceToken, 
+        uint _oceanGovernanceTokenPerBlock, 
+        uint _startBlock, 
+        uint _endBlock
+    ) public {
         oceanFarmingToken = _oceanFarmingToken;
         oceanGovernanceToken = _oceanGovernanceToken;
 

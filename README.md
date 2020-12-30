@@ -43,6 +43,12 @@ $ npm run migrate:rinkeby
 $ npm run script:rinkeby
 ```
 
+<br>
+
+### ④ Test (Mainnet-fork approach)
+```
+$ ganache-cli --fork https://mainnet.infura.io/v3/{YOUR INFURA KEY}
+```
 
 &nbsp;
 
