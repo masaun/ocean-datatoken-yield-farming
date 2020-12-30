@@ -19,7 +19,7 @@ contract OceanFarmingPoolObjects {
         IERC20 lpToken;                 // Address of LP token contract.
         uint256 allocPoint;             // How many allocation points assigned to this pool.
         uint256 lastRewardBlock;        // Last block number that MARK distribution occured.
-        uint256 accMarkPerShare;        // Accumulated MARK per share, times 1e12. See below.
+        uint256 accOceanGovernanceTokenPerShare;        // Accumulated OceanGovernanceToken per share, times 1e12. See below.
     }
 
 
