@@ -27,13 +27,13 @@ contract OceanFarmingPool is OceanFarmingPoolStorages, OceanFarmingPoolEvents {
     using SafeERC20 for IERC20;
 
     OceanLPToken public oceanLPToken;
-    OceanGovernanceToken public oceanGovernanceToken;
+    OceanGovernanceToken public OGToken;
 
-    constructor(OceanLPToken _oceanLPToken, OceanGovernanceToken _oceanGovernanceToken, uint _markPerBlock, uint _startBlock, uint _endBlock) public {
+    constructor(OceanLPToken _oceanLPToken, OceanGovernanceToken _oceanGovernanceToken, uint _oceanGovernanceTokenPerBlock, uint _startBlock, uint _endBlock) public {
         oceanLPToken = _oceanLPToken;
         oceanGovernanceToken = _oceanGovernanceToken;
 
-        markPerBlock = _markPerBlock;
+        oceanGovernanceTokenPerBlock = _oceanGovernanceTokenPerBlock;
         startBlock = _startBlock;
         endBlock = _endBlock;
     }
@@ -81,7 +81,7 @@ contract OceanFarmingPool is OceanFarmingPoolStorages, OceanFarmingPoolEvents {
      * @dev Adds a new lp to the pool. Can only be called by the owner. DO NOT add the same LP token more than once.
      * @param _allocPoint How many allocation points to assign to this pool.
      * @param _lpToken Address of LP token contract.
-     * @param _withUpdate Whether to update all LP token contracts. Should be true if MARK distribution has already begun.
+     * @param _withUpdate Whether to update all LP token contracts. Should be true if OceanGovernanceToken (OGToken) distribution has already begun.
      */
     function add(uint256 _allocPoint, IERC20 _lpToken, bool _withUpdate) public onlyOwner {
         if (_withUpdate) {
@@ -93,15 +93,15 @@ contract OceanFarmingPool is OceanFarmingPoolStorages, OceanFarmingPoolEvents {
             lpToken: _lpToken,
             allocPoint: _allocPoint,
             lastRewardBlock: lastRewardBlock,
-            accMarkPerShare: 0
+            accOceanGovernanceTokenPerShare: 0
         }));
     }
 
     /**
-     * @dev Update the given pool's MARK allocation point. Can only be called by the owner.
+     * @dev Update the given pool's OceanGovernanceToken allocation point. Can only be called by the owner.
      * @param _pid ID of a specific LP token pool. See index of PoolInfo[].
      * @param _allocPoint How many allocation points to assign to this pool.
-     * @param _withUpdate Whether to update all LP token contracts. Should be true if MARK distribution has already begun.
+     * @param _withUpdate Whether to update all LP token contracts. Should be true if OceanGovernanceToken distribution has already begun.
      */
     function set(uint256 _pid, uint256 _allocPoint, bool _withUpdate) public onlyOwner {
         if (_withUpdate) {
@@ -128,22 +128,22 @@ contract OceanFarmingPool is OceanFarmingPoolStorages, OceanFarmingPoolEvents {
     }
 
     /**
-     * @dev View function to see pending MARK on frontend.
+     * @dev View function to see pending OceanGovernanceToken on frontend.
      * @param _pid ID of a specific LP token pool. See index of PoolInfo[].
      * @param _user Address of a specific user.
-     * @return Pending MARK.
+     * @return Pending OceanGovernanceToken.
      */
-    function pendingMark(uint256 _pid, address _user) external view returns (uint256) {
+    function pendingOceanGovernanceToken(uint256 _pid, address _user) external view returns (uint256) {
         PoolInfo storage pool = poolInfo[_pid];
         UserInfo storage user = userInfo[_pid][_user];
-        uint256 accMarkPerShare = pool.accMarkPerShare;
+        uint256 accOceanGovernanceTokenPerShare = pool.accOceanGovernanceTokenPerShare;
         uint256 lpSupply = pool.lpToken.balanceOf(address(this));
         if (block.number > pool.lastRewardBlock && lpSupply != 0) {
             uint256 multiplier = getMultiplier(pool.lastRewardBlock, block.number);
-            uint256 markReward = multiplier.mul(markPerBlock).mul(pool.allocPoint).div(totalAllocPoint);
-            accMarkPerShare = accMarkPerShare.add(markReward.mul(1e12).div(lpSupply));
+            uint256 oceanGovernanceTokenReward = multiplier.mul(oceanGovernanceTokenPerBlock).mul(pool.allocPoint).div(totalAllocPoint);
+            accOceanGovernanceTokenPerShare = accOceanGovernanceTokenPerShare.add(oceanGovernanceTokenReward.mul(1e12).div(lpSupply));
         }
-        return user.amount.mul(accMarkPerShare).div(1e12).sub(user.rewardDebt);
+        return user.amount.mul(accOceanGovernanceTokenPerShare).div(1e12).sub(user.rewardDebt);
     }
 
     /**
@@ -171,13 +171,13 @@ contract OceanFarmingPool is OceanFarmingPoolStorages, OceanFarmingPoolEvents {
             return;
         }
         uint256 multiplier = getMultiplier(pool.lastRewardBlock, block.number);
-        uint256 markReward = multiplier.mul(markPerBlock).mul(pool.allocPoint).div(totalAllocPoint);
-        pool.accMarkPerShare = pool.accMarkPerShare.add(markReward.mul(1e12).div(lpSupply));
+        uint256 oceanGovernanceTokenReward = multiplier.mul(oceanGovernanceTokenPerBlock).mul(pool.allocPoint).div(totalAllocPoint);
+        pool.accOceanGovernanceTokenPerShare = pool.accOceanGovernanceTokenPerShare.add(oceanGovernanceTokenReward.mul(1e12).div(lpSupply));
         pool.lastRewardBlock = block.number;
     }
 
     /**
-     * @dev Deposit LP tokens to Faucet for MARK allocation.
+     * @dev Deposit LP tokens to Faucet for OceanGovernanceToken allocation.
      * @param _pid ID of a specific LP token pool. See index of PoolInfo[].
      * @param _amount Amount of LP tokens to deposit.
      */
@@ -186,12 +186,12 @@ contract OceanFarmingPool is OceanFarmingPoolStorages, OceanFarmingPoolEvents {
         UserInfo storage user = userInfo[_pid][msg.sender];
         updatePool(_pid);
         if (user.amount > 0) {
-            uint256 pending = user.amount.mul(pool.accMarkPerShare).div(1e12).sub(user.rewardDebt);
-            safeMarkTransfer(msg.sender, pending);
+            uint256 pending = user.amount.mul(pool.accOceanGovernanceTokenPerShare).div(1e12).sub(user.rewardDebt);
+            safeOceanGovernanceTokenTransfer(msg.sender, pending);
         }
         pool.lpToken.safeTransferFrom(address(msg.sender), address(this), _amount);
         user.amount = user.amount.add(_amount);
-        user.rewardDebt = user.amount.mul(pool.accMarkPerShare).div(1e12);
+        user.rewardDebt = user.amount.mul(pool.accOceanGovernanceTokenPerShare).div(1e12);
         emit Deposit(msg.sender, _pid, _amount);
     }
 
@@ -205,10 +205,10 @@ contract OceanFarmingPool is OceanFarmingPoolStorages, OceanFarmingPoolEvents {
         UserInfo storage user = userInfo[_pid][msg.sender];
         require(user.amount >= _amount, "Can't withdraw more token than previously deposited.");
         updatePool(_pid);
-        uint256 pending = user.amount.mul(pool.accMarkPerShare).div(1e12).sub(user.rewardDebt);
-        safeMarkTransfer(msg.sender, pending);
+        uint256 pending = user.amount.mul(pool.accOceanGovernanceTokenPerShare).div(1e12).sub(user.rewardDebt);
+        safeOceanGovernanceTokenTransfer(msg.sender, pending);
         user.amount = user.amount.sub(_amount);
-        user.rewardDebt = user.amount.mul(pool.accMarkPerShare).div(1e12);
+        user.rewardDebt = user.amount.mul(pool.accOceanGovernanceTokenPerShare).div(1e12);
         pool.lpToken.safeTransfer(address(msg.sender), _amount);
         emit Withdraw(msg.sender, _pid, _amount);
     }
@@ -227,16 +227,16 @@ contract OceanFarmingPool is OceanFarmingPoolStorages, OceanFarmingPoolEvents {
     }
 
     /**
-     * @dev Safe mark transfer function, just in case if rounding error causes faucet to not have enough MARK.
+     * @dev Safe OceanGovernanceToken transfer function, just in case if rounding error causes faucet to not have enough OceanGovernanceToken.
      * @param _to Target address.
-     * @param _amount Amount of MARK to transfer.
+     * @param _amount Amount of OceanGovernanceToken to transfer.
      */
-    function safeMarkTransfer(address _to, uint256 _amount) internal {
-        uint256 markBalance = MARK.balanceOf(address(this));
-        if (_amount > markBalance) {
-            MARK.transfer(_to, markBalance);
+    function safeOceanGovernanceTokenTransfer(address _to, uint256 _amount) internal {
+        uint256 oceanGovernanceTokenBalance = oceanGovernanceToken.balanceOf(address(this));
+        if (_amount > oceanGovernanceTokenBalance) {
+            oceanGovernanceToken.transfer(_to, oceanGovernanceTokenBalance);
         } else {
-            MARK.transfer(_to, _amount);
+            oceanGovernanceToken.transfer(_to, _amount);
         }
     }
 
@@ -249,35 +249,35 @@ contract OceanFarmingPool is OceanFarmingPoolStorages, OceanFarmingPoolEvents {
     }
     
     /**
-     * @dev Views total number of MARK tokens deposited for rewards.
-     * @return MARK token balance of the faucet.
+     * @dev Views total number of OceanGovernanceToken tokens deposited for rewards.
+     * @return OceanGovernanceToken token balance of the faucet.
      */
     function balance() public view returns (uint256) {
-        return MARK.balanceOf(address(this));
+        return oceanGovernanceToken.balanceOf(address(this));
     }
 
     /**
-     * @dev Transfer MARK tokens.
+     * @dev Transfer OceanGovernanceToken tokens.
      * @return Success.
      */
     function transfer(address to, uint256 value) external onlyOwner returns (bool) {
-        return MARK.transfer(to, value);
+        return oceanGovernanceToken.transfer(to, value);
     }
 
 
     /**
-     * @dev Update MARK per block.
-     * @return MARK per block.
+     * @dev Update OceanGovernanceToken per block.
+     * @return OceanGovernanceToken per block.
      */
-    function updateMARKPerBlock(uint256 _markPerBlock) external onlyOwner returns (uint256) {
-        require(_markPerBlock > 0, "Mark per Block must be greater than 0.");
+    function updateOceanGovernanceTokenPerBlock(uint256 _oceanGovernanceTokenPerBlock) external onlyOwner returns (uint256) {
+        require(_oceanGovernanceTokenPerBlock > 0, "OceanGovernanceToken per Block must be greater than 0.");
         massUpdatePools();
-        markPerBlock = _markPerBlock;
-        return markPerBlock;
+        oceanGovernanceTokenPerBlock = _oceanGovernanceTokenPerBlock;
+        return oceanGovernanceTokenPerBlock;
     }
 
     /**
-     * @dev Define last block on which MARK reward distribution occurs.
+     * @dev Define last block on which OceanGovernanceToken reward distribution occurs.
      * @return Last block number.
      */
     function setEndBlock(uint256 _endBlock) external onlyOwner returns (uint256) {
