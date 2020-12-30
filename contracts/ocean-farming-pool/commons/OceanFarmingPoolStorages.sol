@@ -10,7 +10,7 @@ import { OceanFarmingPoolObjects } from "./OceanFarmingPoolObjects.sol";
 contract OceanFarmingPoolStorages is OceanFarmingPoolObjects {
 
     PoolInfo[] public poolInfo;         // Info of each pool.
-    uint256 public markPerBlock;        // MARK tokens created per block.
+    uint256 public oceanGovernanceTokenPerBlock;        // Ocean Governance Tokens (OGT) created per block.
     uint256 public startBlock;          // The block number at which MARK distribution starts.
     uint256 public endBlock;            // The block number at which MARK distribution ends.
     uint256 public totalAllocPoint = 0; // Total allocation poitns. Must be the sum of all allocation points in all pools.

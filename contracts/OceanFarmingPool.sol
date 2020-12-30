@@ -28,7 +28,7 @@ contract OceanFarmingPool is OceanFarmingPoolStorages, OceanFarmingPoolEvents, O
     using SafeERC20 for IERC20;
 
     OceanLPToken public oceanLPToken;
-    OceanGovernanceToken public OGToken;
+    OceanGovernanceToken public oceanGovernanceToken;
 
     constructor(OceanLPToken _oceanLPToken, OceanGovernanceToken _oceanGovernanceToken, uint _oceanGovernanceTokenPerBlock, uint _startBlock, uint _endBlock) public {
         oceanLPToken = _oceanLPToken;
