@@ -20,7 +20,7 @@ import { OceanGovernanceToken } from "./OceanGovernanceToken.sol";
 
 
 /***
- * @title - Ocean Farming Pool contract that supply the Ocean Governance Token (OGT) as rewards to stakers.
+ * @title - Ocean Farming Pool contract that supply the Ocean Governance Token (OGC) as rewards to stakers.
  * @dev - msg.sender is a staker.
  **/
 contract OceanFarmingPool is OceanFarmingPoolStorages, OceanFarmingPoolEvents, Ownable {
