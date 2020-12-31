@@ -43,8 +43,27 @@ $ npm run migrate:rinkeby
 $ npm run script:rinkeby
 ```
 
+<br>
+
+### ④ Test (Mainnet-fork approach)
+- 1. Start ganache-cli with mainnet-fork
+```
+$ ganache-cli --fork https://mainnet.infura.io/v3/{YOUR INFURA KEY}
+```
 
 &nbsp;
+
+- 2. Execute each test file (on the local)
+```
+$ truffle test ./test/test-local/OceanFarmingToken.test.js
+
+$ truffle test ./test/test-local/OceanGovernanceToken.test.js
+
+$ truffle test ./test/test-local/OceanFarmingPool.test.js
+```
+
+
+
 
 ***
 

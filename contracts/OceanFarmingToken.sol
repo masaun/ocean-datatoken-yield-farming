@@ -7,11 +7,12 @@ import { ERC20Detailed } from "openzeppelin-solidity/contracts/token/ERC20/ERC20
 
 
 /***
- * @title - Ocean Pool Token (LP token) contract that represents a pair (OCEAN - DataToken)
+ * @title - Ocean Farming Token contract that represents a staked-LP token (OCEAN - DataToken). 
+ *          (staked-LP token is BToken of Balancer)
  **/
-contract OceanLPToken is ERC20, ERC20Detailed {
+contract OceanFarmingToken is ERC20, ERC20Detailed {
 
-    constructor() public ERC20Detailed("Ocean Liquidity Provider Token", "OLP", 18) {}
+    constructor() public ERC20Detailed("Ocean Farming Token", "OFG", 18) {}
 
     function mint(address to, uint mintAmount) public returns (bool) {
         _mint(to, mintAmount);

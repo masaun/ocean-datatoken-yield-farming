@@ -15,23 +15,29 @@ import { OceanFarmingPoolEvents } from "./ocean-farming-pool/commons/OceanFarmin
 import { BToken } from "./ocean-v3/balancer/BToken.sol";
 
 /// Ocean
-import { OceanLPToken } from "./OceanLPToken.sol";
+import { OceanFarmingToken } from "./OceanFarmingToken.sol";
 import { OceanGovernanceToken } from "./OceanGovernanceToken.sol";
 
 
 /***
- * @title - Ocean Farming Pool contract that supply the Ocean Governance Token (OGT) as rewards to stakers.
+ * @title - Ocean Farming Pool contract that supply the Ocean Governance Token (OGC) as rewards to stakers.
  * @dev - msg.sender is a staker.
  **/
-contract OceanFarmingPool is OceanFarmingPoolStorages, OceanFarmingPoolEvents, Ownable  {
+contract OceanFarmingPool is OceanFarmingPoolStorages, OceanFarmingPoolEvents, Ownable {
     using SafeMath for uint;
     using SafeERC20 for IERC20;
 
-    OceanLPToken public oceanLPToken;
+    OceanFarmingToken public oceanFarmingToken;
     OceanGovernanceToken public oceanGovernanceToken;
 
-    constructor(OceanLPToken _oceanLPToken, OceanGovernanceToken _oceanGovernanceToken, uint _oceanGovernanceTokenPerBlock, uint _startBlock, uint _endBlock) public {
-        oceanLPToken = _oceanLPToken;
+    constructor(
+        OceanFarmingToken _oceanFarmingToken, 
+        OceanGovernanceToken _oceanGovernanceToken, 
+        uint _oceanGovernanceTokenPerBlock, 
+        uint _startBlock, 
+        uint _endBlock
+    ) public {
+        oceanFarmingToken = _oceanFarmingToken;
         oceanGovernanceToken = _oceanGovernanceToken;
 
         oceanGovernanceTokenPerBlock = _oceanGovernanceTokenPerBlock;
@@ -43,25 +49,30 @@ contract OceanFarmingPool is OceanFarmingPoolStorages, OceanFarmingPoolEvents, O
      * @notice - A user stake BToken    
      * @param _bToken - BToken should be a pair of Ocean and DataToken
      **/
-    function stake(BToken _bToken, uint stakedBTokenAmount) public returns (bool) {
+    function stake(uint poolId, BToken _bToken, uint stakedBTokenAmount) public returns (bool) {
         BToken bToken = _bToken;
         bToken.transferFrom(msg.sender, address(this), stakedBTokenAmount);
+        
+        oceanFarmingToken.mint(msg.sender, stakedBTokenAmount);
 
-        oceanLPToken.mint(msg.sender, stakedBTokenAmount);
+        deposit(poolId, stakedBTokenAmount);
     }
 
     /***
      * @notice - A user un-stake BToken
      * @param _bToken - BToken should be a pair of Ocean and DataToken
      **/
-    function unStake(BToken _bToken, uint unStakedBTokenAmount) public returns (bool) {
-        oceanLPToken.burn(msg.sender, unStakedBTokenAmount);
+    function unStake(uint poolId, BToken _bToken, uint unStakedBTokenAmount) public returns (bool) {
+        oceanFarmingToken.burn(msg.sender, unStakedBTokenAmount);
 
         BToken bToken = _bToken;
         bToken.transfer(msg.sender, unStakedBTokenAmount);
     
-        uint rewardAmount = _computeRewardAmount();  /// [Todo]: Compute rewards amount
-        oceanGovernanceToken.mint(msg.sender, rewardAmount);        
+        withdraw(poolId, unStakedBTokenAmount);
+
+        /// [Note]: 2 rows below may be replaced with the withdraw() method above.
+        //uint rewardAmount = _computeRewardAmount();  /// [Todo]: Compute rewards amount
+        //oceanGovernanceToken.mint(msg.sender, rewardAmount);        
     }
 
 
@@ -81,7 +92,7 @@ contract OceanFarmingPool is OceanFarmingPoolStorages, OceanFarmingPoolEvents, O
     /**
      * @dev Adds a new lp to the pool. Can only be called by the owner. DO NOT add the same LP token more than once.
      * @param _allocPoint How many allocation points to assign to this pool.
-     * @param _lpToken Address of LP token contract.
+     * @param _lpToken Address of LP token contract. (BToken inherit IERC20)
      * @param _withUpdate Whether to update all LP token contracts. Should be true if OceanGovernanceToken (OGToken) distribution has already begun.
      */
     function add(uint256 _allocPoint, IERC20 _lpToken, bool _withUpdate) public onlyOwner {
@@ -125,7 +136,7 @@ contract OceanFarmingPool is OceanFarmingPoolStorages, OceanFarmingPoolEvents, O
             return 0;
         } else {
             return endBlock.sub(_from);
-        }     
+        }
     }
 
     /**

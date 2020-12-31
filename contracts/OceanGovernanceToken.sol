@@ -11,7 +11,7 @@ import { ERC20Detailed } from "openzeppelin-solidity/contracts/token/ERC20/ERC20
  **/
 contract OceanGovernanceToken is ERC20, ERC20Detailed {
 
-    constructor() public ERC20Detailed("Ocean Governance Token", "OGT", 18) {}
+    constructor() public ERC20Detailed("Ocean Governance Token", "OGC", 18) {}
 
     function mint(address to, uint mintAmount) public returns (bool) {
         _mint(to, mintAmount);
