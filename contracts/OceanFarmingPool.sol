@@ -136,7 +136,7 @@ contract OceanFarmingPool is OceanFarmingPoolStorages, OceanFarmingPoolEvents, O
             return 0;
         } else {
             return endBlock.sub(_from);
-        }     
+        }
     }
 
     /**
