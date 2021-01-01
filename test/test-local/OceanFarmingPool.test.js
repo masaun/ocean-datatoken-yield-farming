@@ -19,16 +19,31 @@ let oceanGovernanceToken;
 contract("OceanFarmingPool", function(accounts) {
 
     describe("Setup", () => {
-        before("Check all accounts", async () => {
+        it("Check all accounts", async () => {
             console.log('=== accounts ===\n', accounts);
         });        
 
-        before("Setup OceanFarmingToken contract instance", async () => {
+        it("Setup OceanFarmingToken contract instance", async () => {
             oceanFarmingToken = await OceanFarmingToken.new({ from: accounts[0] });
         });
 
-        before("Setup OceanGovernanceToken contract instance", async () => {
+        it("Setup OceanGovernanceToken contract instance", async () => {
             oceanGovernanceToken = await OceanGovernanceToken.new({ from: accounts[0] });
+        });
+
+        it("Setup OceanFarmingPool contract instance", async () => {
+            const _oceanFarmingToken = oceanFarmingToken.address;
+            const _oceanGovernanceToken = oceanGovernanceToken.address;
+            const _oceanGovernanceTokenPerBlock = 1000;
+            const _startBlock = 0;
+            const _endBlock = 1000;
+
+            oceanFarmingPool = await OceanFarmingPool.new(_oceanFarmingToken, 
+                                                          _oceanGovernanceToken, 
+                                                          _oceanGovernanceTokenPerBlock, 
+                                                          _startBlock, 
+                                                          _endBlock, 
+                                                          { from: accounts[0] });
         });
     });
 

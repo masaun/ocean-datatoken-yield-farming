@@ -55,11 +55,19 @@ $ ganache-cli --fork https://mainnet.infura.io/v3/{YOUR INFURA KEY}
 
 - 2. Execute each test file (on the local)
 ```
+【Ocean Farming Pool】
+
 $ truffle test ./test/test-local/OceanFarmingToken.test.js
 
 $ truffle test ./test/test-local/OceanGovernanceToken.test.js
 
 $ truffle test ./test/test-local/OceanFarmingPool.test.js
+
+```
+```
+【BPool and BToken】of balancer
+$ npm run test:balancer
+($ truffle test ./test/test-local/ocean-v3/unit/balancer/*)
 ```
 
 
