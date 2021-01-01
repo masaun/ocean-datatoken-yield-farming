@@ -138,10 +138,10 @@ contract("OceanFarmingPool", function(accounts) {
     describe("OceanFarmingPool", () => {
         it("Stake BToken into OceanFarmingPool", async () => {
             const poolId = 1;
-            const _BPool = POOL;  /// [Note]: BToken is inherited into BPool. Therefore, BToken address is same with BPool address. (1 BPool has 1 BToken)
+            const _bPool = POOL;  /// [Note]: BToken is inherited into BPool. Therefore, BToken address is same with BPool address. (1 BPool has 1 BToken)
             const stakedBTokenAmount = web3.utils.toWei('100', 'ether');
 
-            await oceanFarmingPool.stake(poolId, _bToken, stakedBTokenAmount, { from: accounts[0] });
+            await oceanFarmingPool.stake(poolId, _bPool, stakedBTokenAmount, { from: accounts[0] });
         });
     });
 
