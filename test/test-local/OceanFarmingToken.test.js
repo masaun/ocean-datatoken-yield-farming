@@ -32,7 +32,6 @@ contract("OceanFarmingToken", function(accounts) {
         it('OceanFarmingToken Balance of accounts[1] should be 1000000 GLM', async () => {
             let _balance = await oceanFarmingToken.balanceOf(accounts[1]);
             let balance = parseFloat(web3.utils.fromWei(_balance));  /// [Note]: Convert BN ooject to Number
-            console.log('=== Balance of accounts[1] ===\n', _balance);
             console.log('=== Balance of accounts[1] ===\n', balance);
 
             assert.equal(
