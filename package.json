@@ -1,5 +1,5 @@
 {
-  "name": "nft-liquidity-mining-with-ocean",
+  "name": "ocean-yield-farming",
   "version": "1.0.0",
   "description": "",
   "directories": {
@@ -24,7 +24,7 @@
     "dotenv": "^8.2.0",
     "eth-block-tracker": "^4.4.3",
     "ethereumjs-tx": "^2.1.2",
-
+    "chai": "^4.2.0",
     "decimal.js": "^10.2.0"
   },
   "devDependencies": {}
