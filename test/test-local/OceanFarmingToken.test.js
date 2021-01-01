@@ -37,8 +37,9 @@ contract("OceanFarmingToken", function(accounts) {
             );
 
             console.log('=== Balance of accounts[1] ===\n', await oceanFarmingToken.balanceOf(accounts[1]));
-            let balance = await oceanFarmingToken.balanceOf(accounts[1]);
-            console.log('=== Balance of accounts[1] ===\n', parseFloat(web3.utils.fromWei(balance)));
+            let _balance = await oceanFarmingToken.balanceOf(accounts[1]);
+            let balance = parseFloat(web3.utils.fromWei(balance));
+            console.log('=== Balance of accounts[1] ===\n', balance);
         });
     });
 
