@@ -2,26 +2,13 @@
 const Web3 = require('web3');
 const web3 = new Web3(new Web3.providers.WebsocketProvider('ws://localhost:8545'));
 
-/// BPool and BToken
+/// Balancer（BPool and BToken）
 const Decimal = require('decimal.js')
-const {
-    calcSpotPrice,
-    calcOutGivenIn,
-    calcInGivenOut,
-    calcRelativeDiff
-} = require('./helpers/calComparisons.js')
 const { assert } = require('chai')
-
 const BPool = artifacts.require('BPool')
 const BFactory = artifacts.require('BFactory')
 const TToken = artifacts.require('DataTokenTemplate')
-const errorDelta = 10 ** -8
 const swapFee = 10 ** -3 // 0.001;
-const exitFee = 0
-const verbose = process.env.VERBOSE
-
-
-
 
 /// Artifact of each contracts
 const OceanFarmingPool = artifacts.require("OceanFarmingPool");
@@ -70,7 +57,7 @@ contract("OceanFarmingPool", function(accounts) {
         const sumWeights = Decimal(wethDenorm).add(Decimal(daiDenorm))
         const wethNorm = Decimal(wethDenorm).div(Decimal(sumWeights))
         const daiNorm = Decimal(daiDenorm).div(Decimal(sumWeights))
-        
+
         it("Setup BPool and BToken", async () => {
             const poolTemplate = await BPool.new()
             factory = await BFactory.new(poolTemplate.address)
