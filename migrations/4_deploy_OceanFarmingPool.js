@@ -9,6 +9,12 @@ const _startBlock = 0;
 const _endBlock = 1000;
 
 module.exports = async function(deployer, accounts, network) {
+    if (network == 'test' || network == 'local') {  /// [Note]: Mainnet-fork approach with Truffle/Ganache-CLI/Infura 
+        /// [Todo]: 
+    } else if (network == 'ropsten') {
+        /// [Todo]: 
+    }
+
     await deployer.deploy(OceanFarmingPool, 
                           _oceanFarmingToken, 
                           _oceanGovernanceToken, 
