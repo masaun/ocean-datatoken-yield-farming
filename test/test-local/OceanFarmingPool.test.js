@@ -26,7 +26,10 @@ let oceanGovernanceToken;
  **/
 contract("OceanFarmingPool", function(accounts) {
 
-    describe("BPool", () => {
+    /***
+     * @dev - Reference from /balancer/BPool.Test.js
+     **/
+    describe("Setup BPool and BToken", () => {
         const { toWei } = web3.utils
         const { fromWei } = web3.utils
         const admin = accounts[0]
@@ -58,7 +61,7 @@ contract("OceanFarmingPool", function(accounts) {
         const wethNorm = Decimal(wethDenorm).div(Decimal(sumWeights))
         const daiNorm = Decimal(daiDenorm).div(Decimal(sumWeights))
 
-        it("Setup BPool and BToken", async () => {
+        it("Create contract instances of BPool and BToken", async () => {
             const poolTemplate = await BPool.new()
             factory = await BFactory.new(poolTemplate.address)
 
@@ -97,7 +100,7 @@ contract("OceanFarmingPool", function(accounts) {
         })
     }); 
 
-    describe("Setup", () => {
+    describe("Setup OceanFarmingPool", () => {
         it("Check all accounts", async () => {
             console.log('=== accounts ===\n', accounts);
         });        
