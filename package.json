@@ -23,7 +23,9 @@
     "@truffle/hdwallet-provider": "^1.2.0",
     "dotenv": "^8.2.0",
     "eth-block-tracker": "^4.4.3",
-    "ethereumjs-tx": "^2.1.2"
+    "ethereumjs-tx": "^2.1.2",
+
+    "decimal.js": "^10.2.0"
   },
   "devDependencies": {}
 }
