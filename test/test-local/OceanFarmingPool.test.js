@@ -10,6 +10,12 @@ const BFactory = artifacts.require('BFactory')
 const TToken = artifacts.require('DataTokenTemplate')
 const swapFee = 10 ** -3 // 0.001;
 
+let WETH; let DAI // addresses
+let weth; let dai // TTokens
+let factory       // BPool factory
+let pool          // first pool w/ defaults
+let POOL          // Pool address
+
 /// Artifact of each contracts
 const OceanFarmingPool = artifacts.require("OceanFarmingPool");
 const OceanFarmingToken = artifacts.require("OceanFarmingToken");
@@ -20,11 +26,18 @@ let oceanFarmingPool;
 let oceanFarmingToken;
 let oceanGovernanceToken;
 
+/// Deployed address
+let OCEAN_FARMING_POOL;
+
 
 /***
  * @dev - Execution COMMAND: $ truffle test ./test/test-local/OceanFarmingPool.test.js
  **/
 contract("OceanFarmingPool", function(accounts) {
+
+    const deployer = accounts[0];
+    const user1 = accounts[1];
+    const user2 = accounts[2];
 
     /***
      * @dev - Reference from /balancer/BPool.Test.js
@@ -36,11 +49,11 @@ contract("OceanFarmingPool", function(accounts) {
 
         const MAX = web3.utils.toTwosComplement(-1)
 
-        let WETH; let DAI // addresses
-        let weth; let dai // TTokens
-        let factory // BPool factory
-        let pool // first pool w/ defaults
-        let POOL //   pool address
+        // let WETH; let DAI // addresses
+        // let weth; let dai // TTokens
+        // let factory // BPool factory
+        // let pool // first pool w/ defaults
+        // let POOL //   pool address
 
         const wethBalance = '4'
         const wethDenorm = '10'
@@ -126,11 +139,22 @@ contract("OceanFarmingPool", function(accounts) {
                                                           _startBlock, 
                                                           _endBlock, 
                                                           { from: accounts[0] });
+
+            OCEAN_FARMING_POOL = oceanFarmingPool.address;
         });
     });
 
     describe("OceanFarmingPool", () => {
+        it("Stake BPool (BToken) into OceanFarmingPool", async () => {
+            const poolId = 1;
+            const _bPool = POOL;  /// [Note]: BToken is inherited into BPool. Therefore, BToken address is same with BPool address. (1 BPool has 1 BToken)
+            const stakedBTokenAmount = web3.utils.toWei('100', 'ether');
 
+            const bPool = await BPool.at(_bPool, { from: user1 });
+            await bPool.approve(OCEAN_FARMING_POOL, stakedBTokenAmount, { from: user1 });
+
+            await oceanFarmingPool.stake(poolId, _bPool, stakedBTokenAmount, { from: user1 });
+        });
     });
 
 });

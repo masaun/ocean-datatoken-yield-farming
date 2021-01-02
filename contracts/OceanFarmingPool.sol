@@ -12,7 +12,9 @@ import { OceanFarmingPoolStorages } from "./ocean-farming-pool/commons/OceanFarm
 import { OceanFarmingPoolEvents } from "./ocean-farming-pool/commons/OceanFarmingPoolEvents.sol";
 
 /// Balancer
-import { BToken } from "./ocean-v3/balancer/BToken.sol";
+/// [Note]: BPool is inherited into BPool. Therefore, BPool address is same with BPool address. (1 BPool has 1 BPool)
+import { BPool } from "./ocean-v3/balancer/BPool.sol";
+//import { BPool } from "./ocean-v3/balancer/BPool.sol";
 
 /// Ocean
 import { OceanFarmingToken } from "./OceanFarmingToken.sol";
@@ -46,29 +48,29 @@ contract OceanFarmingPool is OceanFarmingPoolStorages, OceanFarmingPoolEvents, O
     }
 
     /***
-     * @notice - A user stake BToken    
-     * @param _bToken - BToken should be a pair of Ocean and DataToken
+     * @notice - A user stake BPool (BToken)    
+     * @param _bPool - BPool (BToken) should be a pair of Ocean and DataToken
      **/
-    function stake(uint poolId, BToken _bToken, uint stakedBTokenAmount) public returns (bool) {
-        BToken bToken = _bToken;
-        bToken.transferFrom(msg.sender, address(this), stakedBTokenAmount);
+    function stake(uint poolId, BPool _bPool, uint stakedBPoolAmount) public returns (bool) {
+        BPool bPool = _bPool;
+        bPool.transferFrom(msg.sender, address(this), stakedBPoolAmount);
         
-        oceanFarmingToken.mint(msg.sender, stakedBTokenAmount);
+        oceanFarmingToken.mint(msg.sender, stakedBPoolAmount);
 
-        deposit(poolId, stakedBTokenAmount);
+        deposit(poolId, stakedBPoolAmount);
     }
 
     /***
-     * @notice - A user un-stake BToken
-     * @param _bToken - BToken should be a pair of Ocean and DataToken
+     * @notice - A user un-stake BPool
+     * @param _bPool - BPool should be a pair of Ocean and DataToken
      **/
-    function unStake(uint poolId, BToken _bToken, uint unStakedBTokenAmount) public returns (bool) {
-        oceanFarmingToken.burn(msg.sender, unStakedBTokenAmount);
+    function unStake(uint poolId, BPool _bPool, uint unStakedBPoolAmount) public returns (bool) {
+        oceanFarmingToken.burn(msg.sender, unStakedBPoolAmount);
 
-        BToken bToken = _bToken;
-        bToken.transfer(msg.sender, unStakedBTokenAmount);
+        BPool bPool = _bPool;
+        bPool.transfer(msg.sender, unStakedBPoolAmount);
     
-        withdraw(poolId, unStakedBTokenAmount);
+        withdraw(poolId, unStakedBPoolAmount);
 
         /// [Note]: 2 rows below may be replaced with the withdraw() method above.
         //uint rewardAmount = _computeRewardAmount();  /// [Todo]: Compute rewards amount
@@ -92,7 +94,7 @@ contract OceanFarmingPool is OceanFarmingPoolStorages, OceanFarmingPoolEvents, O
     /**
      * @dev Adds a new lp to the pool. Can only be called by the owner. DO NOT add the same LP token more than once.
      * @param _allocPoint How many allocation points to assign to this pool.
-     * @param _lpToken Address of LP token contract. (BToken inherit IERC20)
+     * @param _lpToken Address of LP token contract. (BPool inherit IERC20)
      * @param _withUpdate Whether to update all LP token contracts. Should be true if OceanGovernanceToken (OGToken) distribution has already begun.
      */
     function add(uint256 _allocPoint, IERC20 _lpToken, bool _withUpdate) public onlyOwner {
