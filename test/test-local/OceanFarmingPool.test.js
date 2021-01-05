@@ -113,6 +113,20 @@ contract("OceanFarmingPool", function(accounts) {
         })
     }); 
 
+    describe('BToken tests', () => {
+        it('should get name, symbol, decimals', async () => {
+            const bPool = await BPool.at(POOL, { from: deployer });
+            const _name = await bPool.name({ from: deployer });
+            const _symbol = await bPool.symbol({ from: deployer });
+            const _decimals = await bPool.decimals({ from: deployer });
+
+            // const name = web3.utils.fromWei(`${ _name }`);
+            // const symbol = web3.utils.fromWei(`${ _symbol }`);
+            // const decimals = web3.utils.fromWei(`${ _decimals }`);         
+            console.log('=== name, symbol, decimals ===', _name, _symbol, _decimals);
+        })
+    })
+
     describe("Setup OceanFarmingPool", () => {
         it("Check all accounts", async () => {
             console.log('=== accounts ===\n', accounts);
@@ -142,13 +156,36 @@ contract("OceanFarmingPool", function(accounts) {
 
             OCEAN_FARMING_POOL = oceanFarmingPool.address;
         });
+
+        it("Transfer BAL into admin (deployer)", async () => {
+            const bPool = await BPool.at(POOL, { from: deployer });
+            let _BALBalance = await bPool.balanceOf(deployer, { from: deployer }); 
+            let BALBalance = parseFloat(web3.utils.fromWei(_BALBalance));
+            console.log('\n=== BAL balance of deployer (admin) ===', BALBalance);  /// [Result]: 
+
+            const amount = web3.utils.toWei('10', 'ether');
+            await bPool.transfer(user1, amount, { from: deployer });
+        });
+
+        it("BAL balance of user1", async () => {
+            const bPool = await BPool.at(POOL, { from: user1 });
+            let _BALBalance = await bPool.balanceOf(user1, { from: user1 }); 
+            let BALBalance = parseFloat(web3.utils.fromWei(_BALBalance));
+            console.log('\n=== BAL balance of user1 ===', BALBalance);  /// [Result]: 
+        });
+    });
+
+    describe("Create Pool (Ocean-DataToken)", () => {
+        it("Add Pool", async () => {
+
+        });
     });
 
     describe("OceanFarmingPool", () => {
         it("Stake BPool (BToken) into OceanFarmingPool", async () => {
             const poolId = 1;
             const _bPool = POOL;  /// [Note]: BToken is inherited into BPool. Therefore, BToken address is same with BPool address. (1 BPool has 1 BToken)
-            const stakedBTokenAmount = web3.utils.toWei('100', 'ether');
+            const stakedBTokenAmount = web3.utils.toWei('5', 'ether');  /// 5 BAL
 
             const bPool = await BPool.at(_bPool, { from: user1 });
             await bPool.approve(OCEAN_FARMING_POOL, stakedBTokenAmount, { from: user1 });
