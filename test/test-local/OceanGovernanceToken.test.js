@@ -25,20 +25,20 @@ contract("OceanGovernanceToken", function(accounts) {
     });
 
     describe("Mint OceanGovernanceToken", () => {
-        it('Mint 1000000 OceanGovernanceToken (GLM)', async () => {
+        it('Mint 1000000 OceanGovernanceToken (OGC)', async () => {
             await oceanGovernanceToken.mint(accounts[1], web3.utils.toWei("1000000", "ether"), { from: accounts[0] });
         }); 
 
-        it('OceanGovernanceToken Balance of accounts[1] should be 1000000 GLM', async () => {
+        it('OceanGovernanceToken balance of accounts[1] should be 1000000 OGC', async () => {
             assert.equal(
                 await oceanGovernanceToken.balanceOf(accounts[1]), 
                 web3.utils.toWei("1000000", "ether"), 
-                "Balance of accounts[1] should be 1000000 GLM"
+                "Balance of accounts[1] should be 1000000 OGC"
             );
 
-            console.log('=== Balance of accounts[1] ===\n', await oceanGovernanceToken.balanceOf(accounts[1]));
+            console.log('=== OceanGovernanceToken (OGC) balance of accounts[1] ===\n', await oceanGovernanceToken.balanceOf(accounts[1]));
             let balance = await oceanGovernanceToken.balanceOf(accounts[1]);
-            console.log('=== Balance of accounts[1] ===\n', parseFloat(web3.utils.fromWei(balance)));
+            console.log('=== OceanGovernanceToken (OGC) balance of accounts[1] ===\n', parseFloat(web3.utils.fromWei(balance)));
         });
     });
 

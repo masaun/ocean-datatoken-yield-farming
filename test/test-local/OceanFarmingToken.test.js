@@ -25,11 +25,11 @@ contract("OceanFarmingToken", function(accounts) {
     });
 
     describe("Mint OceanFarmingToken", () => {
-        it('Mint 1000000 OceanFarmingToken (GLM)', async () => {
+        it('Mint 1000000 OceanFarmingToken (OFG)', async () => {
             await oceanFarmingToken.mint(accounts[1], web3.utils.toWei("1000000", "ether"), { from: accounts[0] });
         }); 
 
-        it('OceanFarmingToken Balance of accounts[1] should be 1000000 GLM', async () => {
+        it('OceanFarmingToken Balance of accounts[1] should be 1000000 OFG', async () => {
             let _balance = await oceanFarmingToken.balanceOf(accounts[1]);
             let balance = parseFloat(web3.utils.fromWei(_balance));  /// [Note]: Convert BN ooject to Number
             console.log('=== Balance of accounts[1] ===\n', balance);
@@ -37,7 +37,7 @@ contract("OceanFarmingToken", function(accounts) {
             assert.equal(
                 await oceanFarmingToken.balanceOf(accounts[1]), 
                 web3.utils.toWei("1000000", "ether"), 
-                "Balance of accounts[1] should be 1000000 GLM"
+                "Balance of accounts[1] should be 1000000 OFG"
             );
 
         });
