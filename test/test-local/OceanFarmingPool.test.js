@@ -144,7 +144,20 @@ contract("OceanFarmingPool", function(accounts) {
         });
     });
 
+    describe("Create Pool (Ocean-DataToken)", () => {
+        it("Add Pool", async () => {
+
+        });
+    });
+
     describe("OceanFarmingPool", () => {
+        it("BAL balance of user1", async () => {
+            const bPool = await BPool.at(POOL, { from: user1 });
+            let _BALBalance = await bPool.balanceOf(user1, { from: user1 }); 
+            let BALBalance = parseFloat(web3.utils.fromWei(_BALBalance));
+            console.log('\n=== BALBalance ===', BALBalance);  /// [Result]:
+        });
+
         it("Stake BPool (BToken) into OceanFarmingPool", async () => {
             const poolId = 1;
             const _bPool = POOL;  /// [Note]: BToken is inherited into BPool. Therefore, BToken address is same with BPool address. (1 BPool has 1 BToken)
