@@ -176,9 +176,20 @@ contract("OceanFarmingPool", function(accounts) {
     });
 
     describe("Create Pool (Ocean-DataToken)", () => {
-        it("Add Pool", async () => {
+        it("Add pool data into the PoolInfo struct", async () => {
             /// [Todo]: 
+            const _allocPoint = 100;
+            const _lpToken = POOL;
+            const _withUpdate = true;
+
+            /// [Note]: The "add()" method should be executed by admin (deployer)
+            await oceanFarmingPool.add(_allocPoint, _lpToken, _withUpdate, { from: deployer });
         });
+
+        it("Check the PoolInfo struct", async () => {
+            /// [Todo]: Get Pool-IDs from the PoolInfo struct
+
+        });        
     });
 
     describe("OceanFarmingPool", () => {
