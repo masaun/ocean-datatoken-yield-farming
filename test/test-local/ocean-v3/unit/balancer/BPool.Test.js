@@ -143,6 +143,7 @@ contract('BPool', async (accounts) => {
             await pool.decimals()
         })
     })
+
     describe('With fees', () => {
         it('swapExactAmountIn', async () => {
             const tokenIn = WETH

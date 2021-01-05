@@ -113,6 +113,20 @@ contract("OceanFarmingPool", function(accounts) {
         })
     }); 
 
+    describe('BToken tests', () => {
+        it('should get name, symbol, decimals', async () => {
+            const bPool = await BPool.at(POOL, { from: deployer });
+            const _name = await bPool.name({ from: deployer });
+            const _symbol = await bPool.symbol({ from: deployer });
+            const _decimals = await bPool.decimals({ from: deployer });
+
+            // const name = web3.utils.fromWei(`${ _name }`);
+            // const symbol = web3.utils.fromWei(`${ _symbol }`);
+            // const decimals = web3.utils.fromWei(`${ _decimals }`);         
+            console.log('=== name, symbol, decimals ===', _name, _symbol, _decimals);
+        })
+    })
+
     describe("Setup OceanFarmingPool", () => {
         it("Check all accounts", async () => {
             console.log('=== accounts ===\n', accounts);
