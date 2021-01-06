@@ -186,6 +186,12 @@ contract("OceanFarmingPool", function(accounts) {
             await oceanFarmingPool.add(_allocPoint, _lpToken, _withUpdate, { from: deployer });
         });
 
+        it("Check pool length of the PoolInfo structs", async () => {
+            const _poolLength = await oceanFarmingPool.poolLength({ from: deployer });
+            let poolLength = parseFloat(web3.utils.fromWei(_poolLength));
+            console.log('\n=== poolLength ===', poolLength);  /// [Result]: 
+        });
+
         it("Check the PoolInfo struct", async () => {
             /// [Todo]: Get Pool-IDs from the PoolInfo struct
 
