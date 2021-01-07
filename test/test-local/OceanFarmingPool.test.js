@@ -204,9 +204,9 @@ contract("OceanFarmingPool", function(accounts) {
             const poolId = 0;     /// [Note]: Index number of the PoolInfo struct
 
             const _bPool = POOL;  /// [Note]: BToken is inherited into BPool. Therefore, BToken address is same with BPool address. (1 BPool has 1 BToken)
-            const stakedBTokenAmount = web3.utils.toWei('0', 'ether');                /// 0 BAL
-            //const stakedBTokenAmount = web3.utils.toWei(`${ 1 * 1e17 }`, 'wei');    /// 0.1 BAL
-            //const stakedBTokenAmount = web3.utils.toWei('5', 'ether');              /// 5 BAL
+            //const stakedBTokenAmount = web3.utils.toWei('0', 'ether');             /// 0 BAL   (Success)
+            //const stakedBTokenAmount = web3.utils.toWei(`${ 1 * 1e17 }`, 'wei');   /// 0.1 BAL (Fail)
+            const stakedBTokenAmount = web3.utils.toWei('5', 'ether');               /// 5 BAL   (Fail)
 
             const bPool = await BPool.at(_bPool, { from: user1 });
             await bPool.approve(OCEAN_FARMING_POOL, stakedBTokenAmount, { from: user1 });
