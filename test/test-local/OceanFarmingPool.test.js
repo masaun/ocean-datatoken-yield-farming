@@ -161,7 +161,7 @@ contract("OceanFarmingPool", function(accounts) {
             const bPool = await BPool.at(POOL, { from: deployer });
             let _BALBalance = await bPool.balanceOf(deployer, { from: deployer }); 
             let BALBalance = parseFloat(web3.utils.fromWei(_BALBalance));
-            console.log('\n=== BAL balance of deployer (admin) ===', BALBalance);  /// [Result]: 
+            console.log('\n=== BAL balance of deployer (admin) ===', BALBalance);  /// [Result]: 100
 
             const amount = web3.utils.toWei('10', 'ether');
             await bPool.transfer(user1, amount, { from: deployer });
@@ -171,7 +171,7 @@ contract("OceanFarmingPool", function(accounts) {
             const bPool = await BPool.at(POOL, { from: user1 });
             let _BALBalance = await bPool.balanceOf(user1, { from: user1 }); 
             let BALBalance = parseFloat(web3.utils.fromWei(_BALBalance));
-            console.log('\n=== BAL balance of user1 ===', BALBalance);  /// [Result]: 
+            console.log('\n=== BAL balance of user1 ===', BALBalance);  /// [Result]: 10
         });
     });
 
@@ -204,8 +204,9 @@ contract("OceanFarmingPool", function(accounts) {
             const poolId = 0;     /// [Note]: Index number of the PoolInfo struct
 
             const _bPool = POOL;  /// [Note]: BToken is inherited into BPool. Therefore, BToken address is same with BPool address. (1 BPool has 1 BToken)
-            const stakedBTokenAmount = web3.utils.toWei(`${ 1 * 1e17 }`, 'wei');    /// 0.1 BAL
-            //const stakedBTokenAmount = web3.utils.toWei('5', 'ether');            /// 5 BAL
+            const stakedBTokenAmount = web3.utils.toWei('0', 'ether');                /// 0 BAL
+            //const stakedBTokenAmount = web3.utils.toWei(`${ 1 * 1e17 }`, 'wei');    /// 0.1 BAL
+            //const stakedBTokenAmount = web3.utils.toWei('5', 'ether');              /// 5 BAL
 
             const bPool = await BPool.at(_bPool, { from: user1 });
             await bPool.approve(OCEAN_FARMING_POOL, stakedBTokenAmount, { from: user1 });
