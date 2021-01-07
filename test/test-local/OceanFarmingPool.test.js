@@ -190,7 +190,7 @@ contract("OceanFarmingPool", function(accounts) {
             const _poolLength = await oceanFarmingPool.poolLength({ from: deployer });
             let poolLength = parseFloat(web3.utils.fromWei(_poolLength));
             //let poolLength = web3.utils.toWei(_poolLength);
-            console.log('\n=== poolLength ===', poolLength);
+            console.log('\n=== poolLength ===', poolLength);  /// [Result]: 1
         });
 
         it("Check the PoolInfo struct", async () => {
@@ -204,7 +204,8 @@ contract("OceanFarmingPool", function(accounts) {
             const poolId = 0;     /// [Note]: Index number of the PoolInfo struct
 
             const _bPool = POOL;  /// [Note]: BToken is inherited into BPool. Therefore, BToken address is same with BPool address. (1 BPool has 1 BToken)
-            const stakedBTokenAmount = web3.utils.toWei('5', 'ether');  /// 5 BAL
+            const stakedBTokenAmount = web3.utils.toWei(`${ 1 * 1e17 }`, 'wei');    /// 0.1 BAL
+            //const stakedBTokenAmount = web3.utils.toWei('5', 'ether');            /// 5 BAL
 
             const bPool = await BPool.at(_bPool, { from: user1 });
             await bPool.approve(OCEAN_FARMING_POOL, stakedBTokenAmount, { from: user1 });
