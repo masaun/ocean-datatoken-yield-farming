@@ -40,6 +40,33 @@ contract("OceanFarmingPool", function(accounts) {
     const user2 = accounts[2];
 
     /***
+     * @dev - Reference from /balancer/BFactory.Test.js
+     **/
+    describe("Setup BFactory and BPool", () => {
+        let factory
+        let poolTemplate
+        const admin = accounts[0]
+
+        it('Setup BFactory and BPool contract instance', async () => {
+            poolTemplate = await BPool.new()
+            factory = await BFactory.new(poolTemplate.address)            
+        })            
+
+        it('should create new BPool', async () => {
+            const txReceipt = await factory.newBPool({ from: admin })
+            //const sPoolEventArgs = testUtils.getEventArgsFromTx(txReceipt, 'BPoolCreated')
+            //console.log('\n=== sPoolEventArgs ===', sPoolEventArgs);
+            //assert(poolTemplate, sPoolEventArgs._bpoolTemplate)
+        })
+
+        it('should get BPool', async () => {
+            const bPoolTemplate = await factory.bpoolTemplate()
+            console.log('\n=== bPoolTemplate ===', bPoolTemplate);
+            assert(poolTemplate, bPoolTemplate)
+        })
+    }); 
+
+    /***
      * @dev - Reference from /balancer/BPool.Test.js
      **/
     describe("Setup BPool and BToken", () => {
@@ -128,7 +155,6 @@ contract("OceanFarmingPool", function(accounts) {
 
         it('should get name, symbol, decimals (via web3.js)', async () => {           
             let instanceBPool = new web3.eth.Contract(BPool.abi, POOL);
-            console.log('\n=== instanceBPool ===', instanceBPool);
             const name_ = await instanceBPool.methods.name().call();
             const symbol_ = await instanceBPool.methods.symbol().call();
             const decimals_ = await instanceBPool.methods.decimals().call();
