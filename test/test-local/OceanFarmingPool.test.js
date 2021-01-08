@@ -220,19 +220,16 @@ contract("OceanFarmingPool", function(accounts) {
         it("Stake BPool (BToken) into OceanFarmingPool", async () => {
             const poolId = 0;     /// [Note]: Index number of the PoolInfo struct
 
-            const _bPool = POOL;  /// [Note]: BToken is inherited into BPool. Therefore, BToken address is same with BPool address. (1 BPool has 1 BToken)
+            /// [Note]: BToken is inherited into BPool. Therefore, BToken address is same with BPool address. (1 BPool has 1 BToken)
             //const stakedBTokenAmount = web3.utils.toWei('0', 'ether');             /// 0 BPT   (Success)
             //const stakedBTokenAmount = web3.utils.toWei(`${ 1 * 1e17 }`, 'wei');   /// 0.1 BAL (Fail)
             const stakedBTokenAmount = web3.utils.toWei('2', 'ether');               /// 5 BPT   (Fail)
 
-            const bPool = await BPool.at(_bPool, { from: user1 });
+            const bPool = await BPool.at(POOL, { from: user1 });
             await bPool.approve(OCEAN_FARMING_POOL, stakedBTokenAmount, { from: user1 });
 
-            const bToken = await IERC20.at(POOL, { from: user1 });
-            await bToken.approve(OCEAN_FARMING_POOL, stakedBTokenAmount, { from: user1 });
-
             /// [Todo]: Need to check "Pool-ID" in advance. Otherwise, a error of "invalid opcode" will happen.
-            await oceanFarmingPool.stake(poolId, bPool, stakedBTokenAmount, { from: user1 });
+            await oceanFarmingPool.stake(poolId, POOL, stakedBTokenAmount, { from: user1 });
         });
     });
 
