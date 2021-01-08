@@ -205,7 +205,7 @@ contract OceanFarmingPool is OceanFarmingPoolStorages, OceanFarmingPoolEvents, O
         }
         
         /// [Note]: Need to approve in advance
-        pool.lpToken.safeTransferFrom(address(msg.sender), address(this), _amount);
+        pool.lpToken.safeTransferFrom(address(msg.sender), address(this), _amount);  /// [Note]: LP token is BPT (Balancer Pool Token)
         user.amount = user.amount.add(_amount);
         user.rewardDebt = user.amount.mul(pool.accOceanGovernanceTokenPerShare).div(1e12);
         emit Deposit(msg.sender, _pid, _amount);

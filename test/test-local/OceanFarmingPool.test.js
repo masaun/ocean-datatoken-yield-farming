@@ -194,7 +194,7 @@ contract("OceanFarmingPool", function(accounts) {
     describe("Create Pool (Ocean-DataToken)", () => {
         it("Add pool data into the PoolInfo struct", async () => {
             /// [Todo]: 
-            const _allocPoint = 100;
+            const _allocPoint = 1;
             const _lpToken = POOL;
             const _withUpdate = true;
 
