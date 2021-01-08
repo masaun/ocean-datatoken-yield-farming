@@ -125,6 +125,15 @@ contract("OceanFarmingPool", function(accounts) {
             // const decimals = web3.utils.fromWei(`${ _decimals }`);         
             console.log('\n=== name, symbol, decimals ===', _name, _symbol, _decimals);
         })
+
+        it('should get name, symbol, decimals (via web3.js)', async () => {           
+            let instanceBPool = new web3.eth.Contract(BPool.abi, POOL);
+            console.log('\n=== instanceBPool ===', instanceBPool);
+            const name_ = await instanceBPool.methods.name().call();
+            const symbol_ = await instanceBPool.methods.symbol().call();
+            const decimals_ = await instanceBPool.methods.decimals().call();
+            console.log('\n=== name_, symbol_, decimals_ ===', name_, symbol_, decimals_);
+        })
     })
 
     describe("Setup OceanFarmingPool", () => {
