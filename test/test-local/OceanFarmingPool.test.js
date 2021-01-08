@@ -20,6 +20,7 @@ let POOL          // Pool address
 const OceanFarmingPool = artifacts.require("OceanFarmingPool");
 const OceanFarmingToken = artifacts.require("OceanFarmingToken");
 const OceanGovernanceToken = artifacts.require("OceanGovernanceToken");
+const IERC20 = artifacts.require("IERC20");
 
 /// Global variable
 let oceanFarmingPool;
@@ -220,12 +221,15 @@ contract("OceanFarmingPool", function(accounts) {
             const poolId = 0;     /// [Note]: Index number of the PoolInfo struct
 
             const _bPool = POOL;  /// [Note]: BToken is inherited into BPool. Therefore, BToken address is same with BPool address. (1 BPool has 1 BToken)
-            //const stakedBTokenAmount = web3.utils.toWei('0', 'ether');             /// 0 BAL   (Success)
+            //const stakedBTokenAmount = web3.utils.toWei('0', 'ether');             /// 0 BPT   (Success)
             //const stakedBTokenAmount = web3.utils.toWei(`${ 1 * 1e17 }`, 'wei');   /// 0.1 BAL (Fail)
-            const stakedBTokenAmount = web3.utils.toWei('5', 'ether');               /// 5 BAL   (Fail)
+            const stakedBTokenAmount = web3.utils.toWei('5', 'ether');               /// 5 BPT   (Fail)
 
             const bPool = await BPool.at(_bPool, { from: user1 });
             await bPool.approve(OCEAN_FARMING_POOL, stakedBTokenAmount, { from: user1 });
+
+            const bToken = await IERC20.at(POOL, { from: user1 });
+            await bToken.approve(OCEAN_FARMING_POOL, stakedBTokenAmount, { from: user1 });
 
             /// [Todo]: Need to check "Pool-ID" in advance. Otherwise, a error of "invalid opcode" will happen.
             await oceanFarmingPool.stake(poolId, _bPool, stakedBTokenAmount, { from: user1 });
