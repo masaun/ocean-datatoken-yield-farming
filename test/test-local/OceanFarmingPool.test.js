@@ -28,6 +28,7 @@ let oceanGovernanceToken;
 
 /// Deployed address
 let OCEAN_FARMING_POOL;
+let OCEAN_FARMING_TOKEN;
 
 
 /***
@@ -77,8 +78,9 @@ contract("OceanFarmingPool", function(accounts) {
         it("Create contract instances of BPool and BToken", async () => {
             const poolTemplate = await BPool.new()
             factory = await BFactory.new(poolTemplate.address)
-
             POOL = await factory.newBPool.call() // this works fine in clean room
+            console.log('\n=== POOL (factory.newBPool()) ===',POOL);
+
             await factory.newBPool({ from: admin })
             pool = await BPool.at(POOL)
 
@@ -111,29 +113,32 @@ contract("OceanFarmingPool", function(accounts) {
                 true
             )
         })
+
+        it('joinPool', async () => {
+            currentPoolBalance = '100'
+            // Call function
+            const pAo = '1'
+            await pool.joinPool(toWei(pAo), [MAX, MAX])
+        })
     }); 
 
     describe('BToken tests', () => {
         it('should get name, symbol, decimals', async () => {
-            const bPool = await BPool.at(POOL, { from: deployer });
-            const _name = await bPool.name({ from: deployer });
-            const _symbol = await bPool.symbol({ from: deployer });
-            const _decimals = await bPool.decimals({ from: deployer });
-
-            // const name = web3.utils.fromWei(`${ _name }`);
-            // const symbol = web3.utils.fromWei(`${ _symbol }`);
-            // const decimals = web3.utils.fromWei(`${ _decimals }`);         
-            console.log('=== name, symbol, decimals ===', _name, _symbol, _decimals);
+            const _name = await pool.name({ from: deployer });
+            const _symbol = await pool.symbol({ from: deployer });
+            const _decimals = await pool.decimals({ from: deployer });    
+            console.log('\n=== name, symbol, decimals ===', _name, _symbol, _decimals);
         })
     })
 
     describe("Setup OceanFarmingPool", () => {
         it("Check all accounts", async () => {
-            console.log('=== accounts ===\n', accounts);
+            console.log('\n=== accounts ===\n', accounts);
         });        
 
         it("Setup OceanFarmingToken contract instance", async () => {
             oceanFarmingToken = await OceanFarmingToken.new({ from: accounts[0] });
+            OCEAN_FARMING_TOKEN = oceanFarmingToken.address;
         });
 
         it("Setup OceanGovernanceToken contract instance", async () => {
@@ -158,40 +163,61 @@ contract("OceanFarmingPool", function(accounts) {
         });
 
         it("Transfer BAL into admin (deployer)", async () => {
-            const bPool = await BPool.at(POOL, { from: deployer });
-            let _BALBalance = await bPool.balanceOf(deployer, { from: deployer }); 
+            let _BALBalance = await pool.balanceOf(deployer, { from: deployer }); 
             let BALBalance = parseFloat(web3.utils.fromWei(_BALBalance));
-            console.log('\n=== BAL balance of deployer (admin) ===', BALBalance);  /// [Result]: 
+            console.log('\n=== BAL balance of deployer (admin) ===', BALBalance);  /// [Result]: 100
 
             const amount = web3.utils.toWei('10', 'ether');
             await bPool.transfer(user1, amount, { from: deployer });
         });
 
         it("BAL balance of user1", async () => {
-            const bPool = await BPool.at(POOL, { from: user1 });
-            let _BALBalance = await bPool.balanceOf(user1, { from: user1 }); 
+            let _BALBalance = await pool.balanceOf(user1, { from: user1 }); 
             let BALBalance = parseFloat(web3.utils.fromWei(_BALBalance));
-            console.log('\n=== BAL balance of user1 ===', BALBalance);  /// [Result]: 
+            console.log('\n=== BAL balance of user1 ===', BALBalance);  /// [Result]: 10
         });
     });
 
     describe("Create Pool (Ocean-DataToken)", () => {
-        it("Add Pool", async () => {
+        it("Add pool data into the PoolInfo struct", async () => {
+            /// [Todo]: 
+            const _allocPoint = 1;
+            const _lpToken = POOL;
+            const _withUpdate = true;
 
+            /// [Note]: The "add()" method should be executed by admin (deployer)
+            await oceanFarmingPool.add(_allocPoint, _lpToken, _withUpdate, { from: deployer });
         });
+
+        it("Check pool length of the PoolInfo structs", async () => {
+            const _poolLength = await oceanFarmingPool.poolLength({ from: deployer });
+            let poolLength = parseFloat(web3.utils.fromWei(_poolLength));
+            //let poolLength = web3.utils.toWei(_poolLength);
+            console.log('\n=== poolLength ===', poolLength);  /// [Result]: 1
+        });
+
+        it("Check the PoolInfo struct", async () => {
+            /// [Todo]: Get Pool-IDs from the PoolInfo struct
+
+        });        
     });
 
     describe("OceanFarmingPool", () => {
         it("Stake BPool (BToken) into OceanFarmingPool", async () => {
-            const poolId = 1;
-            const _bPool = POOL;  /// [Note]: BToken is inherited into BPool. Therefore, BToken address is same with BPool address. (1 BPool has 1 BToken)
-            const stakedBTokenAmount = web3.utils.toWei('5', 'ether');  /// 5 BAL
-
-            const bPool = await BPool.at(_bPool, { from: user1 });
-            await bPool.approve(OCEAN_FARMING_POOL, stakedBTokenAmount, { from: user1 });
-
-            await oceanFarmingPool.stake(poolId, _bPool, stakedBTokenAmount, { from: user1 });
+            /// [Note]: BToken is inherited into BPool. Therefore, BToken address is same with BPool address. (1 BPool has 1 BToken)
+            const poolId = 0;     /// [Note]: Index number of the PoolInfo struct
+            const stakedBTokenAmount = web3.utils.toWei('5', 'ether');  /// 5 BPT
+            await pool.approve(OCEAN_FARMING_POOL, stakedBTokenAmount, { from: user1 });
+            await oceanFarmingPool.stake(poolId, POOL, stakedBTokenAmount, { from: user1 });  /// [Result]: Success to stake
         });
+
+        it("Check the Ocean Farming Token (OFG) balance of user1 (after user1 staked)", async () => {
+            let _oceanFarmingTokenBalance = await oceanFarmingToken.balanceOf(user1, { from: user1 }); 
+            let oceanFarmingTokenBalance = parseFloat(web3.utils.fromWei(_oceanFarmingTokenBalance));
+            console.log('\n=== Ocean Farming Token (OFG) balance of user ===', oceanFarmingTokenBalance);  /// [Result]: 10
+
+        });
+
     });
 
 });

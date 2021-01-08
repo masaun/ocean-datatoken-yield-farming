@@ -8,8 +8,7 @@
   "scripts": {
     "test": "truffle test ./test/test-local/*",
     "test:balancer": "truffle test ./test/test-local/ocean-v3/unit/balancer/*",
-
-
+    "test:farming": "truffle test ./test/test-local/OceanFarmingPool.test.js",
     "compile:local": "truffle compile --reset --network local",
     "migrate:local": "truffle migrate --reset --network local",
     "console:rinkeby": "truffle console --network rinkeby",

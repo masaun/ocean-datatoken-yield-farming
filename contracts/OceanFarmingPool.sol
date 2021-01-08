@@ -51,13 +51,15 @@ contract OceanFarmingPool is OceanFarmingPoolStorages, OceanFarmingPoolEvents, O
      * @notice - A user stake BPool (BToken)    
      * @param _bPool - BPool (BToken) should be a pair of Ocean and DataToken
      **/
+    //function stake(uint poolId, IERC20 _bPool, uint stakedBPoolAmount) public returns (bool) {
     function stake(uint poolId, BPool _bPool, uint stakedBPoolAmount) public returns (bool) {
+        //IERC20 bPool = _bPool;
         BPool bPool = _bPool;
         bPool.transferFrom(msg.sender, address(this), stakedBPoolAmount);
         
         oceanFarmingToken.mint(msg.sender, stakedBPoolAmount);
 
-        deposit(poolId, stakedBPoolAmount);
+        //deposit(poolId, stakedBPoolAmount);  /// [Note]: Check whether Pool ID is existing or not
     }
 
     /***
@@ -203,7 +205,9 @@ contract OceanFarmingPool is OceanFarmingPoolStorages, OceanFarmingPoolEvents, O
             uint256 pending = user.amount.mul(pool.accOceanGovernanceTokenPerShare).div(1e12).sub(user.rewardDebt);
             safeOceanGovernanceTokenTransfer(msg.sender, pending);
         }
-        pool.lpToken.safeTransferFrom(address(msg.sender), address(this), _amount);
+        
+        /// [Note]: Need to approve in advance
+        pool.lpToken.safeTransferFrom(address(msg.sender), address(this), _amount);  /// [Note]: LP token is BPT (Balancer Pool Token)
         user.amount = user.amount.add(_amount);
         user.rewardDebt = user.amount.mul(pool.accOceanGovernanceTokenPerShare).div(1e12);
         emit Deposit(msg.sender, _pid, _amount);

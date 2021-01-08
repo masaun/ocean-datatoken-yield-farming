@@ -57,9 +57,11 @@ $ ganache-cli --fork https://mainnet.infura.io/v3/{YOUR INFURA KEY}
 ```
 【Ocean Farming Pool】
 $ npm run test
-
 ($ truffle test ./test/test-local/OceanFarmingToken.test.js)
 ($ truffle test ./test/test-local/OceanGovernanceToken.test.js)
+
+
+$ npm run test:farming
 ($ truffle test ./test/test-local/OceanFarmingPool.test.js)
 ```
 ```
