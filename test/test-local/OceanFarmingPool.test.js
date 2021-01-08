@@ -223,7 +223,7 @@ contract("OceanFarmingPool", function(accounts) {
             const _bPool = POOL;  /// [Note]: BToken is inherited into BPool. Therefore, BToken address is same with BPool address. (1 BPool has 1 BToken)
             //const stakedBTokenAmount = web3.utils.toWei('0', 'ether');             /// 0 BPT   (Success)
             //const stakedBTokenAmount = web3.utils.toWei(`${ 1 * 1e17 }`, 'wei');   /// 0.1 BAL (Fail)
-            const stakedBTokenAmount = web3.utils.toWei('5', 'ether');               /// 5 BPT   (Fail)
+            const stakedBTokenAmount = web3.utils.toWei('2', 'ether');               /// 5 BPT   (Fail)
 
             const bPool = await BPool.at(_bPool, { from: user1 });
             await bPool.approve(OCEAN_FARMING_POOL, stakedBTokenAmount, { from: user1 });
@@ -232,7 +232,7 @@ contract("OceanFarmingPool", function(accounts) {
             await bToken.approve(OCEAN_FARMING_POOL, stakedBTokenAmount, { from: user1 });
 
             /// [Todo]: Need to check "Pool-ID" in advance. Otherwise, a error of "invalid opcode" will happen.
-            await oceanFarmingPool.stake(poolId, _bPool, stakedBTokenAmount, { from: user1 });
+            await oceanFarmingPool.stake(poolId, bPool, stakedBTokenAmount, { from: user1 });
         });
     });
 
