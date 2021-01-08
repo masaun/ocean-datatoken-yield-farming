@@ -222,17 +222,12 @@ contract("OceanFarmingPool", function(accounts) {
             const poolId = 0;     /// [Note]: Index number of the PoolInfo struct
 
             /// [Note]: BToken is inherited into BPool. Therefore, BToken address is same with BPool address. (1 BPool has 1 BToken)
-            //const stakedBTokenAmount = web3.utils.toWei('0', 'ether');             /// 0 BPT   (Success)
-            //const stakedBTokenAmount = web3.utils.toWei(`${ 1 * 1e17 }`, 'wei');   /// 0.1 BAL (Fail)
-            const stakedBTokenAmount = web3.utils.toWei('2', 'ether');               /// 5 BPT   (Fail)
-
-            const bPool = await BPool.at(POOL, { from: user1 });
-
-            /// [Todo]: Need to check "Pool-ID" in advance. Otherwise, a error of "invalid opcode" will happen.
-            await oceanFarmingPool.stake(poolId, POOL, stakedBTokenAmount, { from: user1 });
+            const stakedBTokenAmount = web3.utils.toWei('5', 'ether');  /// 5 BPT
+            await pool.approve(OCEAN_FARMING_POOL, stakedBTokenAmount, { from: user1 });
+            await oceanFarmingPool.stake(poolId, POOL, stakedBTokenAmount, { from: user1 });  /// [Result]: Success to stake
         });
 
-        it("Check the Ocean Farming Token (OFG) balance of user1 (after user1 staked)", async () => {
+        it("Check the Ocean Farming Token (OFG) balance of user1", async () => {
             let _oceanFarmingTokenBalance = await oceanFarmingToken.balanceOf(user1, { from: user1 }); 
             let oceanFarmingTokenBalance = parseFloat(web3.utils.fromWei(_oceanFarmingTokenBalance));
             console.log('\n=== Ocean Farming Token (OFG) balance of user ===', oceanFarmingTokenBalance);  /// [Result]: 10
