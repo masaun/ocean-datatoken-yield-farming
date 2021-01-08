@@ -40,33 +40,6 @@ contract("OceanFarmingPool", function(accounts) {
     const user2 = accounts[2];
 
     /***
-     * @dev - Reference from /balancer/BFactory.Test.js
-     **/
-    describe("Setup BFactory and BPool", () => {
-        let factory
-        let poolTemplate
-        const admin = accounts[0]
-
-        it('Setup BFactory and BPool contract instance', async () => {
-            poolTemplate = await BPool.new()
-            factory = await BFactory.new(poolTemplate.address)            
-        })            
-
-        it('should create new BPool', async () => {
-            const txReceipt = await factory.newBPool({ from: admin })
-            //const sPoolEventArgs = testUtils.getEventArgsFromTx(txReceipt, 'BPoolCreated')
-            //console.log('\n=== sPoolEventArgs ===', sPoolEventArgs);
-            //assert(poolTemplate, sPoolEventArgs._bpoolTemplate)
-        })
-
-        it('should get BPool', async () => {
-            const bPoolTemplate = await factory.bpoolTemplate()
-            console.log('\n=== bPoolTemplate ===', bPoolTemplate);
-            assert(poolTemplate, bPoolTemplate)
-        })
-    }); 
-
-    /***
      * @dev - Reference from /balancer/BPool.Test.js
      **/
     describe("Setup BPool and BToken", () => {
@@ -104,8 +77,9 @@ contract("OceanFarmingPool", function(accounts) {
         it("Create contract instances of BPool and BToken", async () => {
             const poolTemplate = await BPool.new()
             factory = await BFactory.new(poolTemplate.address)
-
             POOL = await factory.newBPool.call() // this works fine in clean room
+            console.log('\n=== POOL (factory.newBPool()) ===',POOL);
+
             await factory.newBPool({ from: admin })
             pool = await BPool.at(POOL)
 
@@ -137,6 +111,13 @@ contract("OceanFarmingPool", function(accounts) {
                 await pool.isFinalized(),
                 true
             )
+        })
+
+        it('joinPool', async () => {
+            currentPoolBalance = '100'
+            // Call function
+            const pAo = '1'
+            await pool.joinPool(toWei(pAo), [MAX, MAX])
         })
     }); 
 
