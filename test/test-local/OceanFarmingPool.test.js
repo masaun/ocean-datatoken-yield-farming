@@ -20,7 +20,6 @@ let POOL          // Pool address
 const OceanFarmingPool = artifacts.require("OceanFarmingPool");
 const OceanFarmingToken = artifacts.require("OceanFarmingToken");
 const OceanGovernanceToken = artifacts.require("OceanGovernanceToken");
-const IERC20 = artifacts.require("IERC20");
 
 /// Global variable
 let oceanFarmingPool;
@@ -29,6 +28,7 @@ let oceanGovernanceToken;
 
 /// Deployed address
 let OCEAN_FARMING_POOL;
+let OCEAN_FARMING_TOKEN;
 
 
 /***
@@ -151,6 +151,7 @@ contract("OceanFarmingPool", function(accounts) {
 
         it("Setup OceanFarmingToken contract instance", async () => {
             oceanFarmingToken = await OceanFarmingToken.new({ from: accounts[0] });
+            OCEAN_FARMING_TOKEN = oceanFarmingToken.address;
         });
 
         it("Setup OceanGovernanceToken contract instance", async () => {
@@ -226,11 +227,18 @@ contract("OceanFarmingPool", function(accounts) {
             const stakedBTokenAmount = web3.utils.toWei('2', 'ether');               /// 5 BPT   (Fail)
 
             const bPool = await BPool.at(POOL, { from: user1 });
-            await bPool.approve(OCEAN_FARMING_POOL, stakedBTokenAmount, { from: user1 });
 
             /// [Todo]: Need to check "Pool-ID" in advance. Otherwise, a error of "invalid opcode" will happen.
             await oceanFarmingPool.stake(poolId, POOL, stakedBTokenAmount, { from: user1 });
         });
+
+        it("Check the Ocean Farming Token (OFG) balance of user1 (after user1 staked)", async () => {
+            let _oceanFarmingTokenBalance = await oceanFarmingToken.balanceOf(user1, { from: user1 }); 
+            let oceanFarmingTokenBalance = parseFloat(web3.utils.fromWei(_oceanFarmingTokenBalance));
+            console.log('\n=== Ocean Farming Token (OFG) balance of user ===', oceanFarmingTokenBalance);  /// [Result]: 10
+
+        });
+
     });
 
 });

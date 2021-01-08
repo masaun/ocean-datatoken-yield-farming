@@ -23,8 +23,10 @@ contract('MasterChef', ([alice, bob, carol, dev, minter]) => {
         this.chef = await MasterChef.new(this.sushi.address, dev, '1000', '0', '1000', { from: alice });
         assert.equal((await this.chef.devaddr()).valueOf(), dev);
         await expectRevert(this.chef.dev(bob, { from: bob }), 'dev: wut?');
+        
         await this.chef.dev(bob, { from: dev });
         assert.equal((await this.chef.devaddr()).valueOf(), bob);
+        
         await this.chef.dev(alice, { from: bob });
         assert.equal((await this.chef.devaddr()).valueOf(), alice);
     })
@@ -35,6 +37,7 @@ contract('MasterChef', ([alice, bob, carol, dev, minter]) => {
             await this.lp.transfer(alice, '1000', { from: minter });
             await this.lp.transfer(bob, '1000', { from: minter });
             await this.lp.transfer(carol, '1000', { from: minter });
+            
             this.lp2 = await MockERC20.new('LPToken2', 'LP2', '10000000000', { from: minter });
             await this.lp2.transfer(alice, '1000', { from: minter });
             await this.lp2.transfer(bob, '1000', { from: minter });
@@ -45,9 +48,11 @@ contract('MasterChef', ([alice, bob, carol, dev, minter]) => {
             // 100 per block farming rate starting at block 100 with bonus until block 1000
             this.chef = await MasterChef.new(this.sushi.address, dev, '100', '100', '1000', { from: alice });
             await this.chef.add('100', this.lp.address, true);
+            
             await this.lp.approve(this.chef.address, '1000', { from: bob });
             await this.chef.deposit(0, '100', { from: bob });
             assert.equal((await this.lp.balanceOf(bob)).valueOf(), '900');
+            
             await this.chef.emergencyWithdraw(0, { from: bob });
             assert.equal((await this.lp.balanceOf(bob)).valueOf(), '1000');
         });
@@ -84,16 +89,20 @@ contract('MasterChef', ([alice, bob, carol, dev, minter]) => {
             await this.sushi.transferOwnership(this.chef.address, { from: alice });
             await this.chef.add('100', this.lp.address, true);
             await this.lp.approve(this.chef.address, '1000', { from: bob });
+            
             await time.advanceBlockTo('199');
             assert.equal((await this.sushi.totalSupply()).valueOf(), '0');
+            
             await time.advanceBlockTo('204');
             assert.equal((await this.sushi.totalSupply()).valueOf(), '0');
+            
             await time.advanceBlockTo('209');
             await this.chef.deposit(0, '10', { from: bob }); // block 210
             assert.equal((await this.sushi.totalSupply()).valueOf(), '0');
             assert.equal((await this.sushi.balanceOf(bob)).valueOf(), '0');
             assert.equal((await this.sushi.balanceOf(dev)).valueOf(), '0');
             assert.equal((await this.lp.balanceOf(bob)).valueOf(), '990');
+            
             await time.advanceBlockTo('219');
             await this.chef.withdraw(0, '10', { from: bob }); // block 220
             assert.equal((await this.sushi.totalSupply()).valueOf(), '11000');
