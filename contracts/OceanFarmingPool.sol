@@ -51,8 +51,10 @@ contract OceanFarmingPool is OceanFarmingPoolStorages, OceanFarmingPoolEvents, O
      * @notice - A user stake BPool (BToken)    
      * @param _bPool - BPool (BToken) should be a pair of Ocean and DataToken
      **/
-    function stake(uint poolId, BPool _bPool, uint stakedBPoolAmount) public returns (bool) {
-        BPool bPool = _bPool;
+    function stake(uint poolId, IERC20 _bPool, uint stakedBPoolAmount) public returns (bool) {
+    //function stake(uint poolId, BPool _bPool, uint stakedBPoolAmount) public returns (bool) {
+        IERC20 bPool = _bPool;
+        //BPool bPool = _bPool;
         bPool.transferFrom(msg.sender, address(this), stakedBPoolAmount);
         
         oceanFarmingToken.mint(msg.sender, stakedBPoolAmount);
