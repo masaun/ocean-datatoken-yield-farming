@@ -59,7 +59,7 @@ contract OceanFarmingPool is OceanFarmingPoolStorages, OceanFarmingPoolEvents, O
         
         oceanFarmingToken.mint(msg.sender, stakedBPoolAmount);
 
-        //deposit(poolId, stakedBPoolAmount);  /// [Note]: Check whether Pool ID is existing or not
+        deposit(poolId, stakedBPoolAmount);  /// [Note]: Check whether Pool ID is existing or not
     }
 
     /***
@@ -67,12 +67,12 @@ contract OceanFarmingPool is OceanFarmingPoolStorages, OceanFarmingPoolEvents, O
      * @param _bPool - BPool should be a pair of Ocean and DataToken
      **/
     function unStake(uint poolId, BPool _bPool, uint unStakedBPoolAmount) public returns (bool) {
+        withdraw(poolId, unStakedBPoolAmount);
+
         oceanFarmingToken.burn(msg.sender, unStakedBPoolAmount);
 
         BPool bPool = _bPool;
         bPool.transfer(msg.sender, unStakedBPoolAmount);
-    
-        withdraw(poolId, unStakedBPoolAmount);
 
         /// [Note]: 2 rows below may be replaced with the withdraw() method above.
         //uint rewardAmount = _computeRewardAmount();  /// [Todo]: Compute rewards amount

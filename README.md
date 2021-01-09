@@ -48,7 +48,7 @@ $ npm run script:rinkeby
 ### ④ Test (Mainnet-fork approach)
 - 1. Start ganache-cli with mainnet-fork
 ```
-$ ganache-cli --fork https://mainnet.infura.io/v3/{YOUR INFURA KEY}
+$ ganache-cli --fork https://mainnet.infura.io/v3/{YOUR INFURA KEY}@{BLOCK_NUMBER}
 ```
 
 &nbsp;
@@ -78,3 +78,9 @@ $ npm run test:balancer
 ## 【References】
 - Ocean🦑Data Economic Challenge 2020
   - Guide：https://oceandec.devpost.com/details/hackerguide
+
+<br>
+
+- Truffle test (Mainnet-fork approach with Ganache-CLI and Infura)  
+https://medium.com/@samajammin/how-to-interact-with-ethereums-mainnet-in-a-development-environment-with-ganache-3d8649df0876  
+(Current block number @ mainnet: https://etherscan.io/blocks )  
