@@ -18,17 +18,21 @@ let POOL          // Pool address
 
 /// Artifact of each contracts
 const OceanFarmingPool = artifacts.require("OceanFarmingPool");
+const OceanLPToken = artifacts.require("OceanLPToken");
 const OceanFarmingToken = artifacts.require("OceanFarmingToken");
 const OceanGovernanceToken = artifacts.require("OceanGovernanceToken");
 
 /// GloBPT variable
 let oceanFarmingPool;
+let oceanLPToken;
 let oceanFarmingToken;
 let oceanGovernanceToken;
 
 /// Deployed address
 let OCEAN_FARMING_POOL;
+let OCEAN_LP_TOKEN;
 let OCEAN_FARMING_TOKEN;
+let OCEAN_GOVERNANCE_TOKEN;
 
 
 /***
@@ -40,6 +44,46 @@ contract("OceanFarmingPool", function(accounts) {
     const user1 = accounts[1];
     const user2 = accounts[2];
 
+
+    describe("Setup OceanFarmingPool", () => {
+        it("Check all accounts", async () => {
+            console.log('\n=== accounts ===\n', accounts);
+        });        
+
+        it("Setup OceanFarmingToken contract instance", async () => {
+            oceanFarmingToken = await OceanFarmingToken.new({ from: accounts[0] });
+            OCEAN_FARMING_TOKEN = oceanFarmingToken.address;
+        });
+
+        it("Setup OceanLPToken contract instance", async () => {
+            oceanLPToken = await OceanLPToken.new({ from: accounts[0] });
+            OCEAN_LP_TOKEN = oceanLPToken.address;
+        });
+
+        it("Setup OceanGovernanceToken contract instance", async () => {
+            oceanGovernanceToken = await OceanGovernanceToken.new({ from: accounts[0] });
+            OCEAN_GOVERNANCE_TOKEN = oceanGovernanceToken.address;
+        });
+
+        it("Setup OceanFarmingPool contract instance", async () => {
+            const _oceanFarmingToken = oceanFarmingToken.address;
+            const _oceanGovernanceToken = oceanGovernanceToken.address;
+            const _oceanGovernanceTokenPerBlock = 1000;
+            const _startBlock = 0;
+            const _endBlock = 1000;
+
+            oceanFarmingPool = await OceanFarmingPool.new(_oceanFarmingToken, 
+                                                          _oceanGovernanceToken, 
+                                                          _oceanGovernanceTokenPerBlock, 
+                                                          _startBlock, 
+                                                          _endBlock, 
+                                                          { from: accounts[0] });
+
+            OCEAN_FARMING_POOL = oceanFarmingPool.address;
+        });
+    });
+
+
     /***
      * @dev - Reference from /Balancer/BPool.Test.js
      **/
@@ -48,7 +92,7 @@ contract("OceanFarmingPool", function(accounts) {
         const { fromWei } = web3.utils
         const admin = accounts[0]
 
-        const MAX = web3.utils.toTwosComplement(-1)
+        const MAX = web3.utils.toTwosComplement(-1)  /// [Result]: 0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff
 
         // let WETH; let DAI // addresses
         // let weth; let dai // TTokens
@@ -112,61 +156,36 @@ contract("OceanFarmingPool", function(accounts) {
                 await pool.isFinalized(),
                 true
             )
+
+            /// [Note]: The Ocean Liquidity Provider (LP) Tokens that represents a BPT (Balancer Pool Token) of a pair between OCEAN and DataToken.
+            /// Mint the Ocean LP tokens which is same amount of BPT.
+            let _poolBalance = await pool.balanceOf(admin, { from: admin }); 
+            let poolBalance = parseFloat(web3.utils.fromWei(_poolBalance));
+            await oceanLPToken.mint(admin, web3.utils.toWei(`${ poolBalance }`, 'ether'));
         })
 
-        it('joinPool', async () => {
+        it('joinPool (Add liquidity) into the Balancer Pool', async () => {
             const addLiquidityAmount = '1'
             await pool.joinPool(toWei(addLiquidityAmount), [MAX, MAX])
+
+            /// [Note]: The Ocean Liquidity Provider (LP) Tokens that represents a BPT (Balancer Pool Token) of a pair between OCEAN and DataToken.
+            /// Mint the Ocean LP tokens which is same amount of BPT.
+            await oceanLPToken.mint(user1, web3.utils.toWei(addLiquidityAmount, 'ether'));
         })
     }); 
 
-    describe('BToken tests', () => {
-        it('should get name, symbol, decimals', async () => {
-            const _name = await pool.name({ from: deployer });
-            const _symbol = await pool.symbol({ from: deployer });
-            const _decimals = await pool.decimals({ from: deployer });    
-            console.log('\n=== name, symbol, decimals ===', _name, _symbol, _decimals);
-        })
-    })
-
-    describe("Setup OceanFarmingPool", () => {
-        it("Check all accounts", async () => {
-            console.log('\n=== accounts ===\n', accounts);
-        });        
-
-        it("Setup OceanFarmingToken contract instance", async () => {
-            oceanFarmingToken = await OceanFarmingToken.new({ from: accounts[0] });
-            OCEAN_FARMING_TOKEN = oceanFarmingToken.address;
-        });
-
-        it("Setup OceanGovernanceToken contract instance", async () => {
-            oceanGovernanceToken = await OceanGovernanceToken.new({ from: accounts[0] });
-        });
-
-        it("Setup OceanFarmingPool contract instance", async () => {
-            const _oceanFarmingToken = oceanFarmingToken.address;
-            const _oceanGovernanceToken = oceanGovernanceToken.address;
-            const _oceanGovernanceTokenPerBlock = 1000;
-            const _startBlock = 0;
-            const _endBlock = 1000;
-
-            oceanFarmingPool = await OceanFarmingPool.new(_oceanFarmingToken, 
-                                                          _oceanGovernanceToken, 
-                                                          _oceanGovernanceTokenPerBlock, 
-                                                          _startBlock, 
-                                                          _endBlock, 
-                                                          { from: accounts[0] });
-
-            OCEAN_FARMING_POOL = oceanFarmingPool.address;
-        });
-
+    describe("Transfer BPT & Ocean LP Token. Then, both of balance is checked", () => {
         it("Transfer BPT into admin (deployer)", async () => {
             let _BPTBalance = await pool.balanceOf(deployer, { from: deployer }); 
             let BPTBalance = parseFloat(web3.utils.fromWei(_BPTBalance));
-            console.log('\n=== BPT Balance of deployer (admin) ===', BPTBalance);  /// [Result]: 100
+            console.log('\n=== BPT Balance of deployer (admin) ===', BPTBalance);  /// [Result]: 101
 
             const amount = web3.utils.toWei('10', 'ether');
             await pool.transfer(user1, amount, { from: deployer });
+
+            /// [Note]: The Ocean Liquidity Provider (LP) Tokens that represents a BPT (Balancer Pool Token) of a pair between OCEAN and DataToken.
+            /// Transfer the Ocean LP tokens which is same amount of BPT.
+            await oceanLPToken.transfer(user1, amount, { from: deployer });
         });
 
         it("BPT Balance of user1", async () => {
@@ -174,7 +193,21 @@ contract("OceanFarmingPool", function(accounts) {
             let BPTBalance = parseFloat(web3.utils.fromWei(_BPTBalance));
             console.log('\n=== BPT Balance of user1 ===', BPTBalance);  /// [Result]: 10
         });
+
+        it("Ocean LP Token (OLP) Balance of user1", async () => {
+            let _OLPBalance = await pool.balanceOf(user1, { from: user1 }); 
+            let OLPBalance = parseFloat(web3.utils.fromWei(_OLPBalance));
+            console.log('\n=== Ocean LP Token (OLP) Balance of user1 ===', OLPBalance);  /// [Result]: 
+        });
     });
+
+    // describe("Mint Ocean LP Token", () => {
+    //     it('Mint Ocean LP Token (which is same amount with a BPT) into user1', async () => {
+    //         /// [Note]: Ocean Liquidity Provider (LP) Token contract that represents a BPT (Balancer Pool Token) of a pair between OCEAN and DataToken. 
+    //         const mintAmount = web3.utils.toWei('101', 'ether');  /// 101 OLP
+    //         await oceanLPToken.mint(user1, mintAmount);
+    //     })
+    // });
 
     describe("Create Pool (Ocean-DataToken)", () => {
         it("Add pool data into the PoolInfo struct", async () => {
@@ -192,12 +225,7 @@ contract("OceanFarmingPool", function(accounts) {
             let poolLength = parseFloat(web3.utils.fromWei(_poolLength));
             //let poolLength = web3.utils.toWei(_poolLength);
             console.log('\n=== poolLength ===', poolLength);  /// [Result]: 1
-        });
-
-        it("Check the PoolInfo struct", async () => {
-            /// [Todo]: Get Pool-IDs from the PoolInfo struct
-
-        });        
+        });      
     });
 
     describe("OceanFarmingPool", () => {
@@ -205,8 +233,11 @@ contract("OceanFarmingPool", function(accounts) {
             /// [Note]: BToken is inherited into BPool. Therefore, BToken address is same with BPool address. (1 BPool has 1 BToken)
             const poolId = 0;  /// [Note]: Index number of the PoolInfo struct
             const stakedBTokenAmount = web3.utils.toWei('5', 'ether');  /// 5 BPT
+            
             await pool.approve(OCEAN_FARMING_POOL, stakedBTokenAmount, { from: user1 });
-            await oceanFarmingPool.stake(poolId, POOL, stakedBTokenAmount, { from: user1 });  /// [Result]: Success to stake
+            await oceanLPToken.approve(OCEAN_FARMING_POOL, stakedBTokenAmount, { from: user1 });
+
+            await oceanFarmingPool.stake(poolId, OCEAN_LP_TOKEN, stakedBTokenAmount, { from: user1 });
         });
 
         it("Check the Ocean Farming Token (OFG) Balance of user1 (after user1 staked)", async () => {
@@ -220,11 +251,26 @@ contract("OceanFarmingPool", function(accounts) {
             /// [Note]: BToken is inherited into BPool. Therefore, BToken address is same with BPool address. (1 BPool has 1 BToken)
             const poolId = 0;  /// [Note]: Index number of the PoolInfo struct
             const unStakedBTokenAmount = web3.utils.toWei('5', 'ether');  /// 5 BPT
+
             await pool.approve(OCEAN_FARMING_POOL, unStakedBTokenAmount, { from: user1 });
-            await oceanFarmingPool.unStake(poolId, POOL, unStakedBTokenAmount, { from: user1 });  /// [Result]: 
+            await oceanLPToken.approve(OCEAN_FARMING_POOL, unStakedBTokenAmount, { from: user1 });
+            
+            await oceanFarmingPool.unStake(poolId, OCEAN_LP_TOKEN, unStakedBTokenAmount, { from: user1 });  /// [Result]: 
         });
 
-        it("Check the Ocean Governance Token (OGC) Balance of user1 (after user1 un-staked)", async () => {
+        it("Check each token's balance of user1 finally (after user1 un-staked)", async () => {
+            let _BPTBalance = await pool.balanceOf(user1, { from: user1 }); 
+            let BPTBalance = parseFloat(web3.utils.fromWei(_BPTBalance));
+            console.log('\n=== BPT Balance of user1 ===', BPTBalance);  /// [Result]: 
+
+            let _OLPBalance = await pool.balanceOf(user1, { from: user1 }); 
+            let OLPBalance = parseFloat(web3.utils.fromWei(_OLPBalance));
+            console.log('\n=== Ocean LP Token (OLP) Balance of user1 ===', OLPBalance);  /// [Result]: 
+
+            let _oceanFarmingTokenBalance = await oceanFarmingToken.balanceOf(user1, { from: user1 }); 
+            let oceanFarmingTokenBalance = parseFloat(web3.utils.fromWei(_oceanFarmingTokenBalance));
+            console.log('\n=== Ocean Farming Token (OFG) Balance of user ===', oceanFarmingTokenBalance);  /// [Result]:
+
             let _oceanGovernanceTokenBalance = await oceanGovernanceToken.balanceOf(user1, { from: user1 }); 
             let oceanGovernanceTokenBalance = parseFloat(web3.utils.fromWei(_oceanGovernanceTokenBalance));
             console.log('\n=== Ocean Governance Token (OGC) Balance of user ===', oceanGovernanceTokenBalance);  /// [Result]: 
