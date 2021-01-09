@@ -2,6 +2,9 @@
 const Web3 = require('web3');
 const web3 = new Web3(new Web3.providers.WebsocketProvider('ws://localhost:8545'));
 
+/// Test module for time-related things
+const { expectRevert, time } = require('@openzeppelin/test-helpers');
+
 /// Balancer（BPool and BToken）
 const Decimal = require('decimal.js')
 const { assert } = require('chai')
@@ -261,19 +264,19 @@ contract("OceanFarmingPool", function(accounts) {
         it("Check each token's balance of user1 finally (after user1 un-staked)", async () => {
             let _BPTBalance = await pool.balanceOf(user1, { from: user1 }); 
             let BPTBalance = parseFloat(web3.utils.fromWei(_BPTBalance));
-            console.log('\n=== BPT Balance of user1 ===', BPTBalance);  /// [Result]: 
+            console.log('\n=== BPT Balance of user1 ===', BPTBalance);
 
             let _OLPBalance = await pool.balanceOf(user1, { from: user1 }); 
             let OLPBalance = parseFloat(web3.utils.fromWei(_OLPBalance));
-            console.log('\n=== Ocean LP Token (OLP) Balance of user1 ===', OLPBalance);  /// [Result]: 
+            console.log('\n=== Ocean LP Token (OLP) Balance of user1 ===', OLPBalance);
 
             let _oceanFarmingTokenBalance = await oceanFarmingToken.balanceOf(user1, { from: user1 }); 
             let oceanFarmingTokenBalance = parseFloat(web3.utils.fromWei(_oceanFarmingTokenBalance));
-            console.log('\n=== Ocean Farming Token (OFG) Balance of user ===', oceanFarmingTokenBalance);  /// [Result]:
+            console.log('\n=== Ocean Farming Token (OFG) Balance of user ===', oceanFarmingTokenBalance);
 
             let _oceanGovernanceTokenBalance = await oceanGovernanceToken.balanceOf(user1, { from: user1 }); 
             let oceanGovernanceTokenBalance = parseFloat(web3.utils.fromWei(_oceanGovernanceTokenBalance));
-            console.log('\n=== Ocean Governance Token (OGC) Balance of user ===', oceanGovernanceTokenBalance);  /// [Result]: 
+            console.log('\n=== Ocean Governance Token (OGC) Balance of user ===', oceanGovernanceTokenBalance);
         });
     });
 
