@@ -197,7 +197,7 @@ contract("OceanFarmingPool", function(accounts) {
         it("Ocean LP Token (OLP) Balance of user1", async () => {
             let _OLPBalance = await pool.balanceOf(user1, { from: user1 }); 
             let OLPBalance = parseFloat(web3.utils.fromWei(_OLPBalance));
-            console.log('\n=== Ocean LP Token (OLP) Balance of user1 ===', OLPBalance);  /// [Result]: 10
+            console.log('\n=== Ocean LP Token (OLP) Balance of user1 ===', OLPBalance);  /// [Result]: 
         });
     });
 
@@ -258,7 +258,19 @@ contract("OceanFarmingPool", function(accounts) {
             await oceanFarmingPool.unStake(poolId, OCEAN_LP_TOKEN, unStakedBTokenAmount, { from: user1 });  /// [Result]: 
         });
 
-        it("Check the Ocean Governance Token (OGC) Balance of user1 (after user1 un-staked)", async () => {
+        it("Check each token's balance of user1 finally (after user1 un-staked)", async () => {
+            let _BPTBalance = await pool.balanceOf(user1, { from: user1 }); 
+            let BPTBalance = parseFloat(web3.utils.fromWei(_BPTBalance));
+            console.log('\n=== BPT Balance of user1 ===', BPTBalance);  /// [Result]: 
+
+            let _OLPBalance = await pool.balanceOf(user1, { from: user1 }); 
+            let OLPBalance = parseFloat(web3.utils.fromWei(_OLPBalance));
+            console.log('\n=== Ocean LP Token (OLP) Balance of user1 ===', OLPBalance);  /// [Result]: 
+
+            let _oceanFarmingTokenBalance = await oceanFarmingToken.balanceOf(user1, { from: user1 }); 
+            let oceanFarmingTokenBalance = parseFloat(web3.utils.fromWei(_oceanFarmingTokenBalance));
+            console.log('\n=== Ocean Farming Token (OFG) Balance of user ===', oceanFarmingTokenBalance);  /// [Result]:
+
             let _oceanGovernanceTokenBalance = await oceanGovernanceToken.balanceOf(user1, { from: user1 }); 
             let oceanGovernanceTokenBalance = parseFloat(web3.utils.fromWei(_oceanGovernanceTokenBalance));
             console.log('\n=== Ocean Governance Token (OGC) Balance of user ===', oceanGovernanceTokenBalance);  /// [Result]: 
