@@ -68,11 +68,11 @@ contract OceanFarmingPool is OceanFarmingPoolStorages, OceanFarmingPoolEvents, O
      **/
     function unStake(uint poolId, BPool _bPool, uint unStakedBPoolAmount) public returns (bool) {
         oceanFarmingToken.burn(msg.sender, unStakedBPoolAmount);
+    
+        withdraw(poolId, unStakedBPoolAmount);
 
         BPool bPool = _bPool;
         bPool.transfer(msg.sender, unStakedBPoolAmount);
-    
-        withdraw(poolId, unStakedBPoolAmount);
 
         /// [Note]: 2 rows below may be replaced with the withdraw() method above.
         //uint rewardAmount = _computeRewardAmount();  /// [Todo]: Compute rewards amount
