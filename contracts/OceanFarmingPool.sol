@@ -67,9 +67,9 @@ contract OceanFarmingPool is OceanFarmingPoolStorages, OceanFarmingPoolEvents, O
      * @param _bPool - BPool should be a pair of Ocean and DataToken
      **/
     function unStake(uint poolId, BPool _bPool, uint unStakedBPoolAmount) public returns (bool) {
-        oceanFarmingToken.burn(msg.sender, unStakedBPoolAmount);
-    
         withdraw(poolId, unStakedBPoolAmount);
+
+        oceanFarmingToken.burn(msg.sender, unStakedBPoolAmount);
 
         BPool bPool = _bPool;
         bPool.transfer(msg.sender, unStakedBPoolAmount);
