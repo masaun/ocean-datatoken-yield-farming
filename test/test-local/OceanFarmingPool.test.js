@@ -18,17 +18,21 @@ let POOL          // Pool address
 
 /// Artifact of each contracts
 const OceanFarmingPool = artifacts.require("OceanFarmingPool");
+const OceanLPToken = artifacts.require("OceanLPToken");
 const OceanFarmingToken = artifacts.require("OceanFarmingToken");
 const OceanGovernanceToken = artifacts.require("OceanGovernanceToken");
 
 /// GloBPT variable
 let oceanFarmingPool;
+let oceanLPToken;
 let oceanFarmingToken;
 let oceanGovernanceToken;
 
 /// Deployed address
 let OCEAN_FARMING_POOL;
+let OCEAN_LP_TOKEN;
 let OCEAN_FARMING_TOKEN;
+let OCEAN_GOVERNANCE_TOKEN;
 
 
 /***
@@ -118,24 +122,7 @@ contract("OceanFarmingPool", function(accounts) {
             const addLiquidityAmount = '1'
             await pool.joinPool(toWei(addLiquidityAmount), [MAX, MAX])
         })
-
-        it('Mint BPT of IERC20 to user1', async () => {
-
-            const mintAmount = '100';
-            
-            await pool.joinPool(toWei(addLiquidityAmount), [MAX, MAX])
-        })
-
     }); 
-
-    describe('BToken tests', () => {
-        it('should get name, symbol, decimals', async () => {
-            const _name = await pool.name({ from: deployer });
-            const _symbol = await pool.symbol({ from: deployer });
-            const _decimals = await pool.decimals({ from: deployer });    
-            console.log('\n=== name, symbol, decimals ===', _name, _symbol, _decimals);
-        })
-    })
 
     describe("Setup OceanFarmingPool", () => {
         it("Check all accounts", async () => {
@@ -147,8 +134,14 @@ contract("OceanFarmingPool", function(accounts) {
             OCEAN_FARMING_TOKEN = oceanFarmingToken.address;
         });
 
+        it("Setup OceanLPToken contract instance", async () => {
+            oceanLPToken = await OceanLPToken.new({ from: accounts[0] });
+            OCEAN_LP_TOKEN = oceanLPToken.address;
+        });
+
         it("Setup OceanGovernanceToken contract instance", async () => {
             oceanGovernanceToken = await OceanGovernanceToken.new({ from: accounts[0] });
+            OCEAN_GOVERNANCE_TOKEN = oceanGovernanceToken.address;
         });
 
         it("Setup OceanFarmingPool contract instance", async () => {
@@ -182,6 +175,14 @@ contract("OceanFarmingPool", function(accounts) {
             let BPTBalance = parseFloat(web3.utils.fromWei(_BPTBalance));
             console.log('\n=== BPT Balance of user1 ===', BPTBalance);  /// [Result]: 10
         });
+    });
+
+    describe("Mint Ocean LP Token", () => {
+        it('Mint Ocean LP Token (which is same amount with a BPT) into user1', async () => {
+            /// [Note]: Ocean Liquidity Provider (LP) Token contract that represents a BPT (Balancer Pool Token) of a pair between OCEAN and DataToken. 
+            const mintAmount = '101';
+            await oceanLPToken.mint(user1, mintAmount);
+        })
     });
 
     describe("Create Pool (Ocean-DataToken)", () => {

@@ -8,6 +8,7 @@ import { ERC20Detailed } from "openzeppelin-solidity/contracts/token/ERC20/ERC20
 
 /***
  * @title - Ocean Liquidity Provider (LP) Token contract that represents a BPT (Balancer Pool Token) of a pair between OCEAN and DataToken. 
+ * @notice - By using the Ocean LP Tokens, user can use same amount with BPT.
  **/
 contract OceanLPToken is ERC20, ERC20Detailed {
 
