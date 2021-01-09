@@ -118,6 +118,14 @@ contract("OceanFarmingPool", function(accounts) {
             const addLiquidityAmount = '1'
             await pool.joinPool(toWei(addLiquidityAmount), [MAX, MAX])
         })
+
+        it('Mint BPT of IERC20 to user1', async () => {
+
+            const mintAmount = '100';
+            
+            await pool.joinPool(toWei(addLiquidityAmount), [MAX, MAX])
+        })
+
     }); 
 
     describe('BToken tests', () => {
