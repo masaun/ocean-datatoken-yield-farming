@@ -159,18 +159,18 @@ contract("OceanFarmingPool", function(accounts) {
 
             /// [Note]: The Ocean Liquidity Provider (LP) Tokens that represents a BPT (Balancer Pool Token) of a pair between OCEAN and DataToken.
             /// Mint the Ocean LP tokens which is same amount of BPT.
-            let _poolBalance = await pool.balanceOf(admin, { from: user1 }); 
+            let _poolBalance = await pool.balanceOf(admin, { from: admin }); 
             let poolBalance = parseFloat(web3.utils.fromWei(_poolBalance));
-            await oceanLPToken.mint(web3.utils.toWei(poolBalance, 'ether'), admin);
+            await oceanLPToken.mint(admin, web3.utils.toWei(`${ poolBalance }`, 'ether'));
         })
 
-        it('joinPool', async () => {
+        it('joinPool (Add liquidity) into the Balancer Pool', async () => {
             const addLiquidityAmount = '1'
             await pool.joinPool(toWei(addLiquidityAmount), [MAX, MAX])
 
             /// [Note]: The Ocean Liquidity Provider (LP) Tokens that represents a BPT (Balancer Pool Token) of a pair between OCEAN and DataToken.
             /// Mint the Ocean LP tokens which is same amount of BPT.
-            await oceanLPToken.mint(web3.utils.toWei(addLiquidityAmount, 'ether'));
+            await oceanLPToken.mint(user1, web3.utils.toWei(addLiquidityAmount, 'ether'));
         })
     }); 
 
@@ -185,7 +185,7 @@ contract("OceanFarmingPool", function(accounts) {
 
             /// [Note]: The Ocean Liquidity Provider (LP) Tokens that represents a BPT (Balancer Pool Token) of a pair between OCEAN and DataToken.
             /// Transfer the Ocean LP tokens which is same amount of BPT.
-            await oceanLPToken.transfer(user1, amount);
+            await oceanLPToken.transfer(user1, amount, { from: deployer });
         });
 
         it("BPT Balance of user1", async () => {
@@ -253,7 +253,7 @@ contract("OceanFarmingPool", function(accounts) {
             const unStakedBTokenAmount = web3.utils.toWei('5', 'ether');  /// 5 BPT
 
             await pool.approve(OCEAN_FARMING_POOL, unStakedBTokenAmount, { from: user1 });
-            await oceanLPToken.approve(OCEAN_FARMING_POOL, stakedBTokenAmount, { from: user1 });
+            await oceanLPToken.approve(OCEAN_FARMING_POOL, unStakedBTokenAmount, { from: user1 });
             
             await oceanFarmingPool.unStake(poolId, OCEAN_LP_TOKEN, unStakedBTokenAmount, { from: user1 });  /// [Result]: 
         });
