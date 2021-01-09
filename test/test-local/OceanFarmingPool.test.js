@@ -214,8 +214,11 @@ contract("OceanFarmingPool", function(accounts) {
             /// [Note]: BToken is inherited into BPool. Therefore, BToken address is same with BPool address. (1 BPool has 1 BToken)
             const poolId = 0;  /// [Note]: Index number of the PoolInfo struct
             const stakedBTokenAmount = web3.utils.toWei('5', 'ether');  /// 5 BPT
+            
             await pool.approve(OCEAN_FARMING_POOL, stakedBTokenAmount, { from: user1 });
-            await oceanFarmingPool.stake(poolId, POOL, stakedBTokenAmount, { from: user1 });  /// [Result]: Success to stake
+            await oceanLPToken.approve(OCEAN_FARMING_POOL, stakedBTokenAmount, { from: user1 });
+
+            await oceanFarmingPool.stake(poolId, OCEAN_LP_TOKEN, stakedBTokenAmount, { from: user1 });
         });
 
         it("Check the Ocean Farming Token (OFG) Balance of user1 (after user1 staked)", async () => {
@@ -229,8 +232,11 @@ contract("OceanFarmingPool", function(accounts) {
             /// [Note]: BToken is inherited into BPool. Therefore, BToken address is same with BPool address. (1 BPool has 1 BToken)
             const poolId = 0;  /// [Note]: Index number of the PoolInfo struct
             const unStakedBTokenAmount = web3.utils.toWei('5', 'ether');  /// 5 BPT
+
             await pool.approve(OCEAN_FARMING_POOL, unStakedBTokenAmount, { from: user1 });
-            await oceanFarmingPool.unStake(poolId, POOL, unStakedBTokenAmount, { from: user1 });  /// [Result]: 
+            await oceanLPToken.approve(OCEAN_FARMING_POOL, stakedBTokenAmount, { from: user1 });
+            
+            await oceanFarmingPool.unStake(poolId, OCEAN_LP_TOKEN, unStakedBTokenAmount, { from: user1 });  /// [Result]: 
         });
 
         it("Check the Ocean Governance Token (OGC) Balance of user1 (after user1 un-staked)", async () => {
