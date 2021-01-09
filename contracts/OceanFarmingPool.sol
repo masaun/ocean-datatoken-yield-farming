@@ -59,7 +59,7 @@ contract OceanFarmingPool is OceanFarmingPoolStorages, OceanFarmingPoolEvents, O
         
         oceanFarmingToken.mint(msg.sender, stakedBPoolAmount);
 
-        //deposit(poolId, stakedBPoolAmount);  /// [Note]: Check whether Pool ID is existing or not
+        deposit(poolId, stakedBPoolAmount);  /// [Note]: Check whether Pool ID is existing or not
     }
 
     /***
