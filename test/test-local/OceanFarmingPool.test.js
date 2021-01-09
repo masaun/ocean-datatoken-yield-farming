@@ -180,7 +180,7 @@ contract("OceanFarmingPool", function(accounts) {
     describe("Mint Ocean LP Token", () => {
         it('Mint Ocean LP Token (which is same amount with a BPT) into user1', async () => {
             /// [Note]: Ocean Liquidity Provider (LP) Token contract that represents a BPT (Balancer Pool Token) of a pair between OCEAN and DataToken. 
-            const mintAmount = '101';
+            const mintAmount = web3.utils.toWei('101', 'ether');  /// 101 OLP
             await oceanLPToken.mint(user1, mintAmount);
         })
     });
