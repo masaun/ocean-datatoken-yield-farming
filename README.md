@@ -9,6 +9,13 @@
 ***
 
 ## 【Workflow】
+- ① Create Balancer-Pool between Ocean and DataToken. (Add Liquidity)
+- ② Create BPT=Balance Pool Tokens (Ocean-DataToken). (Add Liquidity)
+- ③ Stake BPTs (Ocean-DataToken) into the Ocean Farming Pool contract.
+- ④ Smart contract (the Ocean Farming Pool contract) automatically generate rewards per block.
+  - The Ocean Governance Token (OGC) is generated as rewards.  
+  - Staker can receive rewards ( `Ocean Governance Token (OGC)` ) depends on their share of pool and staked-period (blocks) when they claim rewards.
+- ⑤ Claim rewards and distributes rewards into claimed-staker. (or, Un-Stake BPTs (Ocean-DataToken). At that time, claiming rewards will be executed at the same time)
 
 &nbsp;
 
