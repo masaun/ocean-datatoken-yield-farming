@@ -50,14 +50,14 @@ contract("OceanFarmingPool", function(accounts) {
     describe("Testing of @openzeppelin/test-helpers", () => {
         it("Check the latest time", async () => {
             const _latestTime = await time.latest();
-            const latestTime = parseFloat(web3.utils.fromWei(_latestTime));
+            const latestTime = String(_latestTime);  /// [Result]: e.g. 1610245652
             console.log('\n=== latestTime ===', latestTime);
         }); 
 
-        it("Check the latest block", async () => {
+        it("Check the latest block number", async () => {
             const _latestBlock = await time.latestBlock();
-            const latestBlock = parseFloat(web3.utils.fromWei(_latestBlock));
-            console.log('\n=== latestBlock ===', latestBlock);
+            const latestBlock = String(_latestBlock);
+            console.log('\n=== latestBlock ===', _latestBlock);  /// [Result]: e.g. 11624396
         });
     });
 
