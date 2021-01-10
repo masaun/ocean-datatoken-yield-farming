@@ -239,8 +239,7 @@ contract("OceanFarmingPool", function(accounts) {
 
         it("Check pool length of the PoolInfo structs", async () => {
             const _poolLength = await oceanFarmingPool.poolLength();
-            let poolLength = parseFloat(web3.utils.fromWei(_poolLength), { from: deployer });
-            //let poolLength = _poolLength.valueOf();
+            let poolLength = String(_poolLength);
             console.log('\n=== poolLength ===', poolLength);  /// [Result]: 1
         });      
     });
