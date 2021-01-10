@@ -73,11 +73,31 @@ $ npm run test:farming
 ***
 
 ## 【References】
-- Ocean Data Economic Challenge 2020
-  - Guide：https://oceandec.devpost.com/details/hackerguide
+- Ocean Protocol  
+  - Ocean V3 smart contract  
+https://github.com/oceanprotocol/contracts  
+  - Ocean V3 Document
+    - Data Token: https://docs.oceanprotocol.com/concepts/introduction/  
+  - dApp (Ocean Market)： https://market.oceanprotocol.com/  
+  - Website (Earn): https://oceanprotocol.com/earn  
+  - Ocean Data Economic Challenge 2020
+    - Guide：https://oceandec.devpost.com/details/hackerguide  
 
 <br>
 
-- Truffle test (Mainnet-fork approach with Ganache-CLI and Infura)  
-https://medium.com/@samajammin/how-to-interact-with-ethereums-mainnet-in-a-development-environment-with-ganache-3d8649df0876  
-(Current block number @ mainnet: https://etherscan.io/blocks )  
+- Balancer
+  - BPT (Balancer Pool Token): https://docs.balancer.finance/core-concepts/protocol/pool-lifecycle#bpts  
+  - BAT (Balance Governance Token): https://docs.balancer.finance/core-concepts/bal-balancer-governance-token  
+  - Interfaces: https://docs.balancer.finance/smart-contracts/interfaces  
+
+<br>
+
+- SushiSwap contract: https://github.com/sushiswap/sushiswap  
+- Benchmark protocol contract: https://github.com/benchmarkprotocol  
+
+<br>
+
+- Truffle test
+  - Mainnet-fork approach with Ganache-CLI and Infura   
+https://medium.com/@samajammin/how-to-interact-with-ethereums-mainnet-in-a-development-environment-with-ganache-3d8649df0876    
+(Current block number @ mainnet: https://etherscan.io/blocks )    
