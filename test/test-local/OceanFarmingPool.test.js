@@ -47,6 +47,13 @@ contract("OceanFarmingPool", function(accounts) {
     const user1 = accounts[1];
     const user2 = accounts[2];
 
+    describe("Testing of @openzeppelin/test-helpers", () => {
+        it("Check the latest time", async () => {
+            const _latestTime = await time.latest();
+            const latestTime = parseFloat(web3.utils.fromWei(_latestTime));
+            console.log('\n=== latestTime ===', latestTime);
+        }); 
+    });
 
     describe("Setup OceanFarmingPool", () => {
         it("Check all accounts", async () => {
@@ -225,9 +232,9 @@ contract("OceanFarmingPool", function(accounts) {
         });
 
         it("Check pool length of the PoolInfo structs", async () => {
-            const _poolLength = await oceanFarmingPool.poolLength({ from: deployer });
-            let poolLength = parseFloat(web3.utils.fromWei(_poolLength));
-            //let poolLength = web3.utils.toWei(_poolLength);
+            const _poolLength = await oceanFarmingPool.poolLength();
+            let poolLength = parseFloat(web3.utils.fromWei(_poolLength), { from: deployer });
+            //let poolLength = _poolLength.valueOf();
             console.log('\n=== poolLength ===', poolLength);  /// [Result]: 1
         });      
     });
