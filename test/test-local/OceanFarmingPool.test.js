@@ -269,6 +269,12 @@ contract("OceanFarmingPool", function(accounts) {
             await oceanFarmingPool.unStake(poolId, OCEAN_LP_TOKEN, unStakedBTokenAmount, { from: user1 });  /// [Result]: 
         });
 
+        it("Check pending OCG tokens (as rewards)", async () => {
+            const _pending = await oceanFarmingPool.pendingOceanGovernanceToken(poolId, user1, { from: user1 });
+            const pending = parseFloat(web3.utils.fromWei(_pending));
+            console.log('\n=== pending of OGC tokens (as rewards) ===', pending );
+        });
+        
         it("Check each token's balance of user1 finally (after user1 un-staked)", async () => {
             let _BPTBalance = await pool.balanceOf(user1, { from: user1 }); 
             let BPTBalance = parseFloat(web3.utils.fromWei(_BPTBalance));
