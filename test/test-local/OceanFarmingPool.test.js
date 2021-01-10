@@ -53,6 +53,12 @@ contract("OceanFarmingPool", function(accounts) {
             const latestTime = parseFloat(web3.utils.fromWei(_latestTime));
             console.log('\n=== latestTime ===', latestTime);
         }); 
+
+        it("Check the latest block", async () => {
+            const _latestBlock = await time.latestBlock();
+            const latestBlock = parseFloat(web3.utils.fromWei(_latestBlock));
+            console.log('\n=== latestBlock ===', latestBlock);
+        });
     });
 
     describe("Setup OceanFarmingPool", () => {
