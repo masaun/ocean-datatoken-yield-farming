@@ -25,11 +25,16 @@ const OceanLPToken = artifacts.require("OceanLPToken");
 const OceanFarmingToken = artifacts.require("OceanFarmingToken");
 const OceanGovernanceToken = artifacts.require("OceanGovernanceToken");
 
-/// GloBPT variable
+/// Global variable
 let oceanFarmingPool;
 let oceanLPToken;
 let oceanFarmingToken;
 let oceanGovernanceToken;
+
+/// Global variable (Time-related)
+let latestTime;
+let latestBlock;
+let advancedBlock;
 
 /// Deployed address
 let OCEAN_FARMING_POOL;
@@ -47,17 +52,23 @@ contract("OceanFarmingPool", function(accounts) {
     const user1 = accounts[1];
     const user2 = accounts[2];
 
-    describe("Testing of @openzeppelin/test-helpers", () => {
-        it("Check the latest time", async () => {
+    describe("Setup the time-related things (via @openzeppelin/test-helpers)", () => {
+        it("Get the latest time", async () => {
             const _latestTime = await time.latest();
-            const latestTime = String(_latestTime);  /// [Result]: e.g. 1610245652
-            console.log('\n=== latestTime ===', latestTime);
+            latestTime = String(_latestTime);          /// [Result]: e.g. 1610245652
+            console.log('\n=== latestTime ===', latestTime);        
         }); 
 
-        it("Check the latest block number", async () => {
+        it("Get the latest block number", async () => {
             const _latestBlock = await time.latestBlock();
-            const latestBlock = String(_latestBlock);
-            console.log('\n=== latestBlock ===', _latestBlock);  /// [Result]: e.g. 11624396
+            latestBlock = String(_latestBlock);        /// [Result]: e.g. 11624396
+            console.log('\n=== latestBlock ===', latestBlock);      
+        });
+
+        it("Get advanced block number", async () => {
+            /// [Note]: the advanced block = the latest block number + 1000 block
+            advancedBlock = Number(latestBlock) + 1000; /// [Result]: e.g. 11625396
+            console.log('\n=== advancedBlock ===', advancedBlock);  
         });
     });
 
