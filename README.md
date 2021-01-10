@@ -1,8 +1,8 @@
-# NFT Liquidity Mining with Ocean🦑
+# Ocean DataToken Yield Farming
 
 ***
-## 【Introduction of the NFT Liquidity Mining with Ocean🦑】
-- This is a smart contract for ...
+## 【Introduction of the NFT Liquidity Mining with Ocean】
+- This is a smart contract for ocean's data-token yield farming by using liquidity mining approach.
 
 &nbsp;
 
@@ -17,7 +17,7 @@
 ## 【Remarks】
 - Version
   - Solidity (Solc): v0.5.7
-  - openzeppelin-solidity: v2.5.0
+  - openzeppelin-solidity: v2.4.0
 
 &nbsp;
 
@@ -31,29 +31,31 @@ $ npm install
 
 <br>
 
-### ② Compile & migrate contracts (on Rinkeby testnet)
+### ② Compile & migrate contracts (on local)
 ```
-$ npm run migrate:rinkeby
-```
-
-<br>
-
-### ③ Execute script (it's instead of testing)
-```
-$ npm run script:rinkeby
+$ npm run migrate:local
 ```
 
 <br>
 
-### ④ Test (Mainnet-fork approach)
-- 1. Start ganache-cli with mainnet-fork
+### ③ Test (Mainnet-fork approach)
+- 1: Start ganache-cli with mainnet-fork
 ```
 $ ganache-cli --fork https://mainnet.infura.io/v3/{YOUR INFURA KEY}@{BLOCK_NUMBER}
 ```
 
-&nbsp;
+<br>
 
-- 2. Execute each test file (on the local)
+- 2: Execute test of the balancer-related contract (on the local)
+(BPool and BToken)
+```
+$ npm run test:balancer
+($ truffle test ./test/test-local/ocean-v3/unit/balancer/*)
+```
+
+<br>
+
+- 3: Execute test of the Ocean Farming Pool contract (on the local)
 ```
 【Ocean Farming Pool】
 $ npm run test
@@ -64,19 +66,14 @@ $ npm run test
 $ npm run test:farming
 ($ truffle test ./test/test-local/OceanFarmingPool.test.js)
 ```
-```
-【BPool and BToken】of balancer
-$ npm run test:balancer
-($ truffle test ./test/test-local/ocean-v3/unit/balancer/*)
-```
 
-
+<br>
 
 
 ***
 
 ## 【References】
-- Ocean🦑Data Economic Challenge 2020
+- Ocean Data Economic Challenge 2020
   - Guide：https://oceandec.devpost.com/details/hackerguide
 
 <br>
