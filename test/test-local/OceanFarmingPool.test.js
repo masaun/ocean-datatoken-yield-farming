@@ -2,6 +2,9 @@
 const Web3 = require('web3');
 const web3 = new Web3(new Web3.providers.WebsocketProvider('ws://localhost:8545'));
 
+/// Test module for time-related things
+const { expectRevert, time } = require('@openzeppelin/test-helpers');
+
 /// Balancer（BPool and BToken）
 const Decimal = require('decimal.js')
 const { assert } = require('chai')
@@ -22,11 +25,16 @@ const OceanLPToken = artifacts.require("OceanLPToken");
 const OceanFarmingToken = artifacts.require("OceanFarmingToken");
 const OceanGovernanceToken = artifacts.require("OceanGovernanceToken");
 
-/// GloBPT variable
+/// Global variable
 let oceanFarmingPool;
 let oceanLPToken;
 let oceanFarmingToken;
 let oceanGovernanceToken;
+
+/// Global variable (Time-related)
+let latestTime;
+let latestBlock;
+let advancedBlock;
 
 /// Deployed address
 let OCEAN_FARMING_POOL;
@@ -44,6 +52,25 @@ contract("OceanFarmingPool", function(accounts) {
     const user1 = accounts[1];
     const user2 = accounts[2];
 
+    describe("Setup the time-related things (via @openzeppelin/test-helpers)", () => {
+        it("Get the latest time", async () => {
+            const _latestTime = await time.latest();
+            latestTime = String(_latestTime);          /// [Result]: e.g. 1610245652
+            console.log('\n=== latestTime ===', latestTime);        
+        }); 
+
+        it("Get the latest block number", async () => {
+            const _latestBlock = await time.latestBlock();
+            latestBlock = String(_latestBlock);        /// [Result]: e.g. 11624396
+            console.log('\n=== latestBlock ===', latestBlock);      
+        });
+
+        it("Get advanced block number", async () => {
+            /// [Note]: the advanced block = the latest block number + 1000 block
+            advancedBlock = Number(latestBlock) + 1000; /// [Result]: e.g. 11625396
+            console.log('\n=== advancedBlock ===', advancedBlock);  
+        });
+    });
 
     describe("Setup OceanFarmingPool", () => {
         it("Check all accounts", async () => {
@@ -66,10 +93,11 @@ contract("OceanFarmingPool", function(accounts) {
         });
 
         it("Setup OceanFarmingPool contract instance", async () => {
+            /// [Note]: 100 per block farming rate starting at block 100 until block 1000
             const _oceanFarmingToken = oceanFarmingToken.address;
             const _oceanGovernanceToken = oceanGovernanceToken.address;
-            const _oceanGovernanceTokenPerBlock = 1000;
-            const _startBlock = 0;
+            const _oceanGovernanceTokenPerBlock = 100;
+            const _startBlock = 100;
             const _endBlock = 1000;
 
             oceanFarmingPool = await OceanFarmingPool.new(_oceanFarmingToken, 
@@ -221,9 +249,8 @@ contract("OceanFarmingPool", function(accounts) {
         });
 
         it("Check pool length of the PoolInfo structs", async () => {
-            const _poolLength = await oceanFarmingPool.poolLength({ from: deployer });
-            let poolLength = parseFloat(web3.utils.fromWei(_poolLength));
-            //let poolLength = web3.utils.toWei(_poolLength);
+            const _poolLength = await oceanFarmingPool.poolLength();
+            let poolLength = String(_poolLength);
             console.log('\n=== poolLength ===', poolLength);  /// [Result]: 1
         });      
     });
@@ -258,22 +285,29 @@ contract("OceanFarmingPool", function(accounts) {
             await oceanFarmingPool.unStake(poolId, OCEAN_LP_TOKEN, unStakedBTokenAmount, { from: user1 });  /// [Result]: 
         });
 
+        it("Check pending OCG tokens (as rewards)", async () => {
+            const poolId = 0;  /// [Note]: Index number of the PoolInfo struct
+            const _pending = await oceanFarmingPool.pendingOceanGovernanceToken(poolId, user1, { from: user1 });
+            const pending = parseFloat(web3.utils.fromWei(_pending));
+            console.log('\n=== pending of OGC tokens (as rewards) ===', pending );
+        });
+
         it("Check each token's balance of user1 finally (after user1 un-staked)", async () => {
             let _BPTBalance = await pool.balanceOf(user1, { from: user1 }); 
             let BPTBalance = parseFloat(web3.utils.fromWei(_BPTBalance));
-            console.log('\n=== BPT Balance of user1 ===', BPTBalance);  /// [Result]: 
+            console.log('\n=== BPT Balance of user1 ===', BPTBalance);
 
             let _OLPBalance = await pool.balanceOf(user1, { from: user1 }); 
             let OLPBalance = parseFloat(web3.utils.fromWei(_OLPBalance));
-            console.log('\n=== Ocean LP Token (OLP) Balance of user1 ===', OLPBalance);  /// [Result]: 
+            console.log('\n=== Ocean LP Token (OLP) Balance of user1 ===', OLPBalance);
 
             let _oceanFarmingTokenBalance = await oceanFarmingToken.balanceOf(user1, { from: user1 }); 
             let oceanFarmingTokenBalance = parseFloat(web3.utils.fromWei(_oceanFarmingTokenBalance));
-            console.log('\n=== Ocean Farming Token (OFG) Balance of user ===', oceanFarmingTokenBalance);  /// [Result]:
+            console.log('\n=== Ocean Farming Token (OFG) Balance of user ===', oceanFarmingTokenBalance);
 
             let _oceanGovernanceTokenBalance = await oceanGovernanceToken.balanceOf(user1, { from: user1 }); 
             let oceanGovernanceTokenBalance = parseFloat(web3.utils.fromWei(_oceanGovernanceTokenBalance));
-            console.log('\n=== Ocean Governance Token (OGC) Balance of user ===', oceanGovernanceTokenBalance);  /// [Result]: 
+            console.log('\n=== Ocean Governance Token (OGC) Balance of user ===', oceanGovernanceTokenBalance);
         });
     });
 
