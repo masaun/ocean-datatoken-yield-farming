@@ -69,10 +69,11 @@ contract("OceanFarmingPool", function(accounts) {
         });
 
         it("Setup OceanFarmingPool contract instance", async () => {
+            /// [Note]: 100 per block farming rate starting at block 100 until block 1000
             const _oceanFarmingToken = oceanFarmingToken.address;
             const _oceanGovernanceToken = oceanGovernanceToken.address;
-            const _oceanGovernanceTokenPerBlock = 1000;
-            const _startBlock = 0;
+            const _oceanGovernanceTokenPerBlock = 100;
+            const _startBlock = 100;
             const _endBlock = 1000;
 
             oceanFarmingPool = await OceanFarmingPool.new(_oceanFarmingToken, 
