@@ -95,13 +95,22 @@ contract("OceanFarmingPool", function(accounts) {
             OCEAN_GOVERNANCE_TOKEN = oceanGovernanceToken.address;
         });
 
-        it("Setup OceanFarmingPool contract instance", async () => {
+        it("Setup the OceanFarmingPool contract instance", async () => {
+            /// Get block number
+            const _latestBlock = await time.latestBlock();
+            latestBlock = String(_latestBlock);        
+            console.log('\n=== latestBlock (when the OceanFarmingPool contract is created) ===', latestBlock);      
+
+            const _advancedBlock = Number(latestBlock) + 6000;
+            const advancedBlock = String(_advancedBlock);
+            console.log('\n=== advancedBlock (when the OceanFarmingPool contract is created) ===', advancedBlock);  
+
             /// [Note]: 100 per block farming rate starting at block 100 until block 1000
             const _oceanFarmingToken = oceanFarmingToken.address;
             const _oceanGovernanceToken = oceanGovernanceToken.address;
             const _oceanGovernanceTokenPerBlock = 100;
-            const _startBlock = 100;
-            const _endBlock = 1000;
+            const _startBlock = latestBlock;
+            const _endBlock = advancedBlock;
 
             oceanFarmingPool = await OceanFarmingPool.new(_oceanFarmingToken, 
                                                           _oceanGovernanceToken, 
@@ -242,6 +251,11 @@ contract("OceanFarmingPool", function(accounts) {
 
     describe("Create Pool (Ocean-DataToken)", () => {
         it("Add pool data into the PoolInfo struct", async () => {
+            /// Time is advanced to the latest block number
+            const _latestBlock = await time.latestBlock();
+            latestBlock = String(_latestBlock);
+            await time.advanceBlockTo(latestBlock);
+
             /// [Todo]: 
             const _allocPoint = 1;
             const _lpToken = POOL;
