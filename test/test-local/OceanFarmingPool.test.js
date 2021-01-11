@@ -52,7 +52,7 @@ contract("OceanFarmingPool", function(accounts) {
     const user1 = accounts[1];
     const user2 = accounts[2];
 
-    describe("Setup the time-related things (via @openzeppelin/test-helpers)", () => {
+    describe("Testing for the time-related things (via @openzeppelin/test-helpers)", () => {
         it("Get the latest time", async () => {
             const _latestTime = await time.latest();
             latestTime = String(_latestTime);          /// [Result]: e.g. 1610245652
@@ -65,7 +65,7 @@ contract("OceanFarmingPool", function(accounts) {
             console.log('\n=== latestBlock ===', latestBlock);      
         });
 
-        it("Get advanced block number", async () => {
+        it("Get advanced block number (=the latest block number + 30 days (172800 seconds))", async () => {
             /// [Note]: the advanced block = the latest block number + 1000 block
             /// [Note]: 15 seconds per 1 block
             const _advancedBlock = Number(latestBlock) + 172800; /// [Note]: the latest block number plus block number of 30 days 
@@ -268,6 +268,9 @@ contract("OceanFarmingPool", function(accounts) {
             await oceanLPToken.approve(OCEAN_FARMING_POOL, stakedBTokenAmount, { from: user1 });
 
             /// [Note]: user1 stake 5 OLP (Ocean LP Tokens) at the latest block number
+            const _latestBlock = await time.latestBlock();
+            latestBlock = String(_latestBlock);        /// [Result]: e.g. 11624396
+            console.log('\n=== latestBlock ===', latestBlock);    
             await time.advanceBlockTo(latestBlock);
             await oceanFarmingPool.stake(poolId, OCEAN_LP_TOKEN, stakedBTokenAmount, { from: user1 });
         });
@@ -287,7 +290,10 @@ contract("OceanFarmingPool", function(accounts) {
             await pool.approve(OCEAN_FARMING_POOL, unStakedBTokenAmount, { from: user1 });
             await oceanLPToken.approve(OCEAN_FARMING_POOL, unStakedBTokenAmount, { from: user1 });
             
-            /// [Note]: user1 un-stake 5 OLP (Ocean LP Tokens) at the advanced block number (the latest block number + 86400 seconds)
+            /// [Note]: user1 un-stake 5 OLP (Ocean LP Tokens) at the advanced block number (the latest block number + 30 days (172800 seconds))
+            const _advancedBlock = Number(latestBlock) + 172800; /// [Note]: the latest block number plus block number of 30 days 
+            const advancedBlock = String(_advancedBlock);
+            console.log('\n=== advancedBlock ===', advancedBlock);  
             await time.advanceBlockTo(advancedBlock);
             await oceanFarmingPool.unStake(poolId, OCEAN_LP_TOKEN, unStakedBTokenAmount, { from: user1 });  /// [Result]: 
         });
