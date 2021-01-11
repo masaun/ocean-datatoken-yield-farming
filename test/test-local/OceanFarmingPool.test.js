@@ -67,7 +67,8 @@ contract("OceanFarmingPool", function(accounts) {
 
         it("Get advanced block number", async () => {
             /// [Note]: the advanced block = the latest block number + 1000 block
-            advancedBlock = Number(latestBlock) + 1000; /// [Result]: e.g. 11625396
+            const _advancedBlock = Number(latestBlock) + 86400; /// [Result]: e.g. 11625396
+            const advancedBlock = String(_advancedBlock);
             console.log('\n=== advancedBlock ===', advancedBlock);  
         });
     });
@@ -264,6 +265,8 @@ contract("OceanFarmingPool", function(accounts) {
             await pool.approve(OCEAN_FARMING_POOL, stakedBTokenAmount, { from: user1 });
             await oceanLPToken.approve(OCEAN_FARMING_POOL, stakedBTokenAmount, { from: user1 });
 
+            /// [Note]: user1 stake 5 OLP (Ocean LP Tokens) at the latest block number
+            await time.advanceBlockTo(latestBlock);
             await oceanFarmingPool.stake(poolId, OCEAN_LP_TOKEN, stakedBTokenAmount, { from: user1 });
         });
 
@@ -282,14 +285,16 @@ contract("OceanFarmingPool", function(accounts) {
             await pool.approve(OCEAN_FARMING_POOL, unStakedBTokenAmount, { from: user1 });
             await oceanLPToken.approve(OCEAN_FARMING_POOL, unStakedBTokenAmount, { from: user1 });
             
+            /// [Note]: user1 un-stake 5 OLP (Ocean LP Tokens) at the advanced block number (the latest block number + 86400 seconds)
+            await time.advanceBlockTo(advancedBlock);
             await oceanFarmingPool.unStake(poolId, OCEAN_LP_TOKEN, unStakedBTokenAmount, { from: user1 });  /// [Result]: 
         });
 
-        it("Check pending OCG tokens (as rewards)", async () => {
+        it("Check pending OCG tokens (as rewards) amount", async () => {
             const poolId = 0;  /// [Note]: Index number of the PoolInfo struct
             const _pending = await oceanFarmingPool.pendingOceanGovernanceToken(poolId, user1, { from: user1 });
             const pending = parseFloat(web3.utils.fromWei(_pending));
-            console.log('\n=== pending of OGC tokens (as rewards) ===', pending );
+            console.log('\n=== pending of OGC tokens (as rewards) ===', pending);
         });
 
         it("Check each token's balance of user1 finally (after user1 un-staked)", async () => {
