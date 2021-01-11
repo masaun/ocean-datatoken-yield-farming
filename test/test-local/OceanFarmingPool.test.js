@@ -67,7 +67,9 @@ contract("OceanFarmingPool", function(accounts) {
 
         it("Get advanced block number", async () => {
             /// [Note]: the advanced block = the latest block number + 1000 block
-            const _advancedBlock = Number(latestBlock) + 86400; /// [Result]: e.g. 11625396
+            /// [Note]: 15 seconds per 1 block
+            const _advancedBlock = Number(latestBlock) + 172800; /// [Note]: the latest block number plus block number of 30 days 
+            //const _advancedBlock = Number(latestBlock) + 1000; /// [Result]: e.g. 11625396
             const advancedBlock = String(_advancedBlock);
             console.log('\n=== advancedBlock ===', advancedBlock);  
         });
