@@ -65,11 +65,11 @@ contract("OceanFarmingPool", function(accounts) {
             console.log('\n=== latestBlock ===', latestBlock);      
         });
 
-        it("Get advanced block number (=the latest block number + 30 days (172800 seconds))", async () => {
+        it("Get advanced block number", async () => {
             /// [Note]: the advanced block = the latest block number + 1000 block
             /// [Note]: 15 seconds per 1 block
-            const _advancedBlock = Number(latestBlock) + 20; /// [Note]: the latest block number plus block number of 300 seconds
-            //const _advancedBlock = Number(latestBlock) + 1000; /// [Result]: e.g. 11625396
+            /// [Note]: In case of 1000 block, it's 15000 seconds. (15 second/block * 1000 blocks)
+            const _advancedBlock = Number(latestBlock) + 1000; /// [Result]: e.g. 11625396
             const advancedBlock = String(_advancedBlock);
             console.log('\n=== advancedBlock ===', advancedBlock);  
         });
@@ -291,7 +291,7 @@ contract("OceanFarmingPool", function(accounts) {
             await oceanLPToken.approve(OCEAN_FARMING_POOL, unStakedBTokenAmount, { from: user1 });
             
             /// [Note]: user1 un-stake 5 OLP (Ocean LP Tokens) at the advanced block number (the latest block number + 30 days (172800 seconds))
-            const _advancedBlock = Number(latestBlock) + 20; /// [Note]: the latest block number plus block number of 300 seconds
+            const _advancedBlock = Number(latestBlock) + 5760; /// [Note]: the latest block number plus block number of 1 day (5760=86400 seconds/15 seconds)
             const advancedBlock = String(_advancedBlock);
             console.log('\n=== advancedBlock ===', advancedBlock);  
             await time.advanceBlockTo(advancedBlock);
