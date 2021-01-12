@@ -17,6 +17,7 @@ import { BPool } from "./ocean-v3/balancer/BPool.sol";
 //import { BPool } from "./ocean-v3/balancer/BPool.sol";
 
 /// Ocean
+import { OceanLPToken } from "./OceanLPToken.sol";  /// [Note]: OceanLPToken represents BPTs (Balancer Pool Token) in this Farming Pool contract
 import { OceanFarmingToken } from "./OceanFarmingToken.sol";
 import { OceanGovernanceToken } from "./OceanGovernanceToken.sol";
 
@@ -29,16 +30,19 @@ contract OceanFarmingPool is OceanFarmingPoolStorages, OceanFarmingPoolEvents, O
     using SafeMath for uint;
     using SafeERC20 for IERC20;
 
+    OceanLPToken public oceanLPToken;
     OceanFarmingToken public oceanFarmingToken;
     OceanGovernanceToken public oceanGovernanceToken;
 
     constructor(
+        OceanLPToken _oceanLPToken,
         OceanFarmingToken _oceanFarmingToken, 
         OceanGovernanceToken _oceanGovernanceToken, 
         uint _oceanGovernanceTokenPerBlock, 
         uint _startBlock, 
         uint _endBlock
     ) public {
+        oceanLPToken = _oceanLPToken;
         oceanFarmingToken = _oceanFarmingToken;
         oceanGovernanceToken = _oceanGovernanceToken;
 
