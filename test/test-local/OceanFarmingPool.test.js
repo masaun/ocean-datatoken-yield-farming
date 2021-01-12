@@ -258,12 +258,10 @@ contract("OceanFarmingPool", function(accounts) {
             latestBlock = String(_latestBlock);
             await time.advanceBlockTo(latestBlock);
 
-            /// [Todo]: 
-            const _allocPoint = 1;
-            const _lpToken = POOL;
-            const _withUpdate = true;
-
             /// [Note]: The "add()" method should be executed by admin (deployer)
+            const _allocPoint = 1;
+            const _lpToken = OCEAN_LP_TOKEN;  /// [Note]: Assing OceanLPToken as a IERC20
+            const _withUpdate = true;
             await oceanFarmingPool.add(_allocPoint, _lpToken, _withUpdate, { from: deployer });
         });
 
