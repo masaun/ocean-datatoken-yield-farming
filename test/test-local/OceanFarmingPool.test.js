@@ -298,6 +298,11 @@ contract("OceanFarmingPool", function(accounts) {
             console.log('\n=== latestBlock ===', latestBlock);    
             await time.advanceBlockTo(latestBlock);
             await oceanFarmingPool.stake(poolId, OCEAN_LP_TOKEN, stakedBTokenAmount, { from: user1 });
+
+            /// [Note]: Check totalSupply of the OceanGovernanceToken after the Ocean-LP tokens (OLP) are staked
+            let _totalSupply = await oceanGovernanceToken.totalSupply({ from: user1 }); 
+            let totalSupply = String(_totalSupply);
+            console.log('\n=== TotalSupply of the Ocean Governance Token (OGC) - after the Ocean-LP tokens (OLP) are staked ===', totalSupply);
         });
 
         it("Check the Ocean Farming Token (OFG) Balance of user1 (after user1 staked)", async () => {
