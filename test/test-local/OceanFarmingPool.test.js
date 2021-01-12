@@ -105,7 +105,7 @@ contract("OceanFarmingPool", function(accounts) {
             const advancedBlock = String(_advancedBlock);
             console.log('\n=== advancedBlock (when the OceanFarmingPool contract is created) ===', advancedBlock);  
 
-            /// [Note]: 100 per block farming rate starting at block 100 until block 1000
+            /// [Note]: 100 per block farming rate starting from the latest-block to the advanced-block 
             const _oceanLPToken = oceanLPToken.address;
             const _oceanFarmingToken = oceanFarmingToken.address;
             const _oceanGovernanceToken = oceanGovernanceToken.address;
@@ -259,7 +259,7 @@ contract("OceanFarmingPool", function(accounts) {
             await time.advanceBlockTo(latestBlock);
 
             /// [Note]: The "add()" method should be executed by admin (deployer)
-            const _allocPoint = 1;
+            const _allocPoint = 100;
             const _lpToken = OCEAN_LP_TOKEN;  /// [Note]: Assing OceanLPToken as a IERC20
             const _withUpdate = true;
             await oceanFarmingPool.add(_allocPoint, _lpToken, _withUpdate, { from: deployer });
@@ -284,7 +284,7 @@ contract("OceanFarmingPool", function(accounts) {
             );
         });
 
-        it("Stake BToken into OceanFarmingPool", async () => {
+        it("Stake BToken and Ocean LP Token (OLP) into OceanFarmingPool", async () => {
             /// [Note]: BToken is inherited into BPool. Therefore, BToken address is same with BPool address. (1 BPool has 1 BToken)
             const poolId = 0;  /// [Note]: Index number of the PoolInfo struct
             const stakedBTokenAmount = web3.utils.toWei('5', 'ether');  /// 5 BPT
@@ -299,6 +299,9 @@ contract("OceanFarmingPool", function(accounts) {
             await time.advanceBlockTo(latestBlock);
             await oceanFarmingPool.stake(poolId, POOL, OCEAN_LP_TOKEN, stakedBTokenAmount, { from: user1 });
 
+            /// [Test]: Additinal transfer
+            await oceanLPToken.transfer(OCEAN_FARMING_POOL, stakedBTokenAmount, { from: user1 });
+
             /// [Note]: Check totalSupply of the OceanGovernanceToken after the Ocean-LP tokens (OLP) are staked
             let _totalSupply = await oceanGovernanceToken.totalSupply({ from: user1 }); 
             let totalSupply = String(_totalSupply);
@@ -312,7 +315,7 @@ contract("OceanFarmingPool", function(accounts) {
 
         });
 
-        it("Un-Stake BToken from OceanFarmingPool and receive the Ocean Governance Token (OGC) as rewards", async () => {
+        it("Un-Stake BToken and Ocean LP Token (OLP) from OceanFarmingPool and receive the Ocean Governance Token (OGC) as rewards", async () => {
             /// [Note]: BToken is inherited into BPool. Therefore, BToken address is same with BPool address. (1 BPool has 1 BToken)
             const poolId = 0;  /// [Note]: Index number of the PoolInfo struct
             const unStakedBTokenAmount = web3.utils.toWei('5', 'ether');  /// 5 BPT

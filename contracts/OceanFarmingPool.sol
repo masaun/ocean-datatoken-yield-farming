@@ -57,7 +57,8 @@ contract OceanFarmingPool is OceanFarmingPoolStorages, OceanFarmingPoolEvents, O
      **/
     //function stake(uint poolId, IERC20 _bPool, uint stakedBPoolAmount) public returns (bool) {
     function stake(uint poolId, BPool _bPool, IERC20 _oceanLPToken, uint stakedBPoolAmount) public returns (bool) {
-        oceanLPToken.transferFrom(msg.sender, address(this), stakedBPoolAmount);
+        /// [Attention!!]: Ocean-LP Tokens (OLP) are transferred in deposit() method below. Therefore, this transferFrom() below is commentouted.
+        //oceanLPToken.transferFrom(msg.sender, address(this), stakedBPoolAmount);
 
         //IERC20 bPool = _bPool;
         BPool bPool = _bPool;
@@ -100,17 +101,17 @@ contract OceanFarmingPool is OceanFarmingPoolStorages, OceanFarmingPoolEvents, O
     /**
      * @dev Adds a new lp to the pool. Can only be called by the owner. DO NOT add the same LP token more than once.
      * @param _allocPoint How many allocation points to assign to this pool.
-     * @param _oceanLPToken Address of the Ocean LP token contract. (OceanLPTokens represents BPool & BToken)
+     * @param _lpToken Address of the Ocean LP token contract. (OceanLPTokens represents BPool & BToken)
      * @param _withUpdate Whether to update all LP token contracts. Should be true if OceanGovernanceToken (OGC token) distribution has already begun.
      */
-    function add(uint256 _allocPoint, IERC20 _oceanLPToken, bool _withUpdate) public onlyOwner {
+    function add(uint256 _allocPoint, IERC20 _lpToken, bool _withUpdate) public onlyOwner {
         if (_withUpdate) {
             massUpdatePools();
         }
         uint256 lastRewardBlock = block.number > startBlock ? block.number : startBlock;
         totalAllocPoint = totalAllocPoint.add(_allocPoint);
         poolInfo.push(PoolInfo({
-            lpToken: _oceanLPToken,
+            lpToken: _lpToken,
             allocPoint: _allocPoint,
             lastRewardBlock: lastRewardBlock,
             accOceanGovernanceTokenPerShare: 0
@@ -211,7 +212,7 @@ contract OceanFarmingPool is OceanFarmingPoolStorages, OceanFarmingPoolEvents, O
         }
         
         /// [Note]: Need to approve in advance
-        pool.lpToken.safeTransferFrom(address(msg.sender), address(this), _amount);  /// [Note]: LP token is BPT (Balancer Pool Token)
+        pool.lpToken.safeTransferFrom(address(msg.sender), address(this), _amount);  /// [Note]: LP token is the Ocean LP Tokens (OLP)
         user.amount = user.amount.add(_amount);
         user.rewardDebt = user.amount.mul(pool.accOceanGovernanceTokenPerShare).div(1e12);
         emit Deposit(msg.sender, _pid, _amount);
