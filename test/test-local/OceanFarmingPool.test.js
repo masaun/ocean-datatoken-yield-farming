@@ -105,14 +105,16 @@ contract("OceanFarmingPool", function(accounts) {
             const advancedBlock = String(_advancedBlock);
             console.log('\n=== advancedBlock (when the OceanFarmingPool contract is created) ===', advancedBlock);  
 
-            /// [Note]: 100 per block farming rate starting at block 100 until block 1000
+            /// [Note]: 100 per block farming rate starting from the latest-block to the advanced-block 
+            const _oceanLPToken = oceanLPToken.address;
             const _oceanFarmingToken = oceanFarmingToken.address;
             const _oceanGovernanceToken = oceanGovernanceToken.address;
             const _oceanGovernanceTokenPerBlock = 100;
             const _startBlock = latestBlock;
             const _endBlock = advancedBlock;
 
-            oceanFarmingPool = await OceanFarmingPool.new(_oceanFarmingToken, 
+            oceanFarmingPool = await OceanFarmingPool.new(_oceanLPToken , 
+                                                          _oceanFarmingToken, 
                                                           _oceanGovernanceToken, 
                                                           _oceanGovernanceTokenPerBlock, 
                                                           _startBlock, 
@@ -256,12 +258,10 @@ contract("OceanFarmingPool", function(accounts) {
             latestBlock = String(_latestBlock);
             await time.advanceBlockTo(latestBlock);
 
-            /// [Todo]: 
-            const _allocPoint = 1;
-            const _lpToken = POOL;
-            const _withUpdate = true;
-
             /// [Note]: The "add()" method should be executed by admin (deployer)
+            const _allocPoint = 100;
+            const _lpToken = OCEAN_LP_TOKEN;  /// [Note]: Assing OceanLPToken as a IERC20
+            const _withUpdate = true;
             await oceanFarmingPool.add(_allocPoint, _lpToken, _withUpdate, { from: deployer });
         });
 
@@ -273,7 +273,18 @@ contract("OceanFarmingPool", function(accounts) {
     });
 
     describe("OceanFarmingPool", () => {
-        it("Stake BToken into OceanFarmingPool", async () => {
+        it("Check totalSupply of the OceanGovernanceToken is still '0' before the Ocean-LP tokens (OLP) are staked", async () => {
+            let _totalSupply = await oceanGovernanceToken.totalSupply({ from: user1 }); 
+            let totalSupply = String(_totalSupply);
+            console.log('\n=== TotalSupply of the Ocean Governance Token (OGC) - before the Ocean-LP tokens (OLP) are staked ===', totalSupply);
+            assert.equal(
+                totalSupply,
+                "0",
+                "TotalSupply of the Ocean Governance Token (OGC) before the Ocean-LP tokens (OLP) are staked should be '0'"
+            );
+        });
+
+        it("Stake BToken and Ocean LP Token (OLP) into OceanFarmingPool", async () => {
             /// [Note]: BToken is inherited into BPool. Therefore, BToken address is same with BPool address. (1 BPool has 1 BToken)
             const poolId = 0;  /// [Note]: Index number of the PoolInfo struct
             const stakedBTokenAmount = web3.utils.toWei('5', 'ether');  /// 5 BPT
@@ -286,7 +297,15 @@ contract("OceanFarmingPool", function(accounts) {
             latestBlock = String(_latestBlock);        /// [Result]: e.g. 11624396
             console.log('\n=== latestBlock ===', latestBlock);    
             await time.advanceBlockTo(latestBlock);
-            await oceanFarmingPool.stake(poolId, OCEAN_LP_TOKEN, stakedBTokenAmount, { from: user1 });
+            await oceanFarmingPool.stake(poolId, POOL, OCEAN_LP_TOKEN, stakedBTokenAmount, { from: user1 });
+
+            /// [Test]: Additinal transfer
+            await oceanLPToken.transfer(OCEAN_FARMING_POOL, stakedBTokenAmount, { from: user1 });
+
+            /// [Note]: Check totalSupply of the OceanGovernanceToken after the Ocean-LP tokens (OLP) are staked
+            let _totalSupply = await oceanGovernanceToken.totalSupply({ from: user1 }); 
+            let totalSupply = String(_totalSupply);
+            console.log('\n=== TotalSupply of the Ocean Governance Token (OGC) - after the Ocean-LP tokens (OLP) are staked ===', totalSupply);
         });
 
         it("Check the Ocean Farming Token (OFG) Balance of user1 (after user1 staked)", async () => {
@@ -296,7 +315,7 @@ contract("OceanFarmingPool", function(accounts) {
 
         });
 
-        it("Un-Stake BToken from OceanFarmingPool and receive the Ocean Governance Token (OGC) as rewards", async () => {
+        it("Un-Stake BToken and Ocean LP Token (OLP) from OceanFarmingPool and receive the Ocean Governance Token (OGC) as rewards", async () => {
             /// [Note]: BToken is inherited into BPool. Therefore, BToken address is same with BPool address. (1 BPool has 1 BToken)
             const poolId = 0;  /// [Note]: Index number of the PoolInfo struct
             const unStakedBTokenAmount = web3.utils.toWei('5', 'ether');  /// 5 BPT
@@ -305,11 +324,11 @@ contract("OceanFarmingPool", function(accounts) {
             await oceanLPToken.approve(OCEAN_FARMING_POOL, unStakedBTokenAmount, { from: user1 });
             
             /// [Note]: user1 un-stake 5 OLP (Ocean LP Tokens) at the advanced block number (the latest block number + 30 days (172800 seconds))
-            const _advancedBlock = Number(latestBlock) + 5760; /// [Note]: the latest block number plus block number of 1 day (5760=86400 seconds/15 seconds)
+            const _advancedBlock = Number(latestBlock) + 5760; /// [Note]: the latest block number plus block number of 1 day (5760 blocks = 86400 seconds / 15 seconds)
             const advancedBlock = String(_advancedBlock);
             console.log('\n=== advancedBlock ===', advancedBlock);  
             await time.advanceBlockTo(advancedBlock);
-            await oceanFarmingPool.unStake(poolId, OCEAN_LP_TOKEN, unStakedBTokenAmount, { from: user1 });  /// [Result]: 
+            await oceanFarmingPool.unStake(poolId, POOL, OCEAN_LP_TOKEN, unStakedBTokenAmount, { from: user1 });  /// [Result]: 
         });
 
         it("Check pending OCG tokens (as rewards) amount", async () => {

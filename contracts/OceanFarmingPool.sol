@@ -17,6 +17,7 @@ import { BPool } from "./ocean-v3/balancer/BPool.sol";
 //import { BPool } from "./ocean-v3/balancer/BPool.sol";
 
 /// Ocean
+import { OceanLPToken } from "./OceanLPToken.sol";  /// [Note]: OceanLPToken represents BPTs (Balancer Pool Token) in this Farming Pool contract
 import { OceanFarmingToken } from "./OceanFarmingToken.sol";
 import { OceanGovernanceToken } from "./OceanGovernanceToken.sol";
 
@@ -29,16 +30,19 @@ contract OceanFarmingPool is OceanFarmingPoolStorages, OceanFarmingPoolEvents, O
     using SafeMath for uint;
     using SafeERC20 for IERC20;
 
+    IERC20 public oceanLPToken;
     OceanFarmingToken public oceanFarmingToken;
     OceanGovernanceToken public oceanGovernanceToken;
 
     constructor(
+        IERC20 _oceanLPToken,
         OceanFarmingToken _oceanFarmingToken, 
         OceanGovernanceToken _oceanGovernanceToken, 
         uint _oceanGovernanceTokenPerBlock, 
         uint _startBlock, 
         uint _endBlock
     ) public {
+        oceanLPToken = _oceanLPToken;
         oceanFarmingToken = _oceanFarmingToken;
         oceanGovernanceToken = _oceanGovernanceToken;
 
@@ -52,7 +56,10 @@ contract OceanFarmingPool is OceanFarmingPoolStorages, OceanFarmingPoolEvents, O
      * @param _bPool - BPool (BToken) should be a pair of Ocean and DataToken
      **/
     //function stake(uint poolId, IERC20 _bPool, uint stakedBPoolAmount) public returns (bool) {
-    function stake(uint poolId, BPool _bPool, uint stakedBPoolAmount) public returns (bool) {
+    function stake(uint poolId, BPool _bPool, IERC20 _oceanLPToken, uint stakedBPoolAmount) public returns (bool) {
+        /// [Attention!!]: Ocean-LP Tokens (OLP) are transferred in deposit() method below. Therefore, this transferFrom() below is commentouted.
+        //oceanLPToken.transferFrom(msg.sender, address(this), stakedBPoolAmount);
+
         //IERC20 bPool = _bPool;
         BPool bPool = _bPool;
         bPool.transferFrom(msg.sender, address(this), stakedBPoolAmount);
@@ -66,7 +73,7 @@ contract OceanFarmingPool is OceanFarmingPoolStorages, OceanFarmingPoolEvents, O
      * @notice - A user un-stake BPool
      * @param _bPool - BPool should be a pair of Ocean and DataToken
      **/
-    function unStake(uint poolId, BPool _bPool, uint unStakedBPoolAmount) public returns (bool) {
+    function unStake(uint poolId, BPool _bPool, IERC20 _oceanLPToken, uint unStakedBPoolAmount) public returns (bool) {
         withdraw(poolId, unStakedBPoolAmount);
 
         oceanFarmingToken.burn(msg.sender, unStakedBPoolAmount);
@@ -74,9 +81,7 @@ contract OceanFarmingPool is OceanFarmingPoolStorages, OceanFarmingPoolEvents, O
         BPool bPool = _bPool;
         bPool.transfer(msg.sender, unStakedBPoolAmount);
 
-        /// [Note]: 2 rows below may be replaced with the withdraw() method above.
-        //uint rewardAmount = _computeRewardAmount();  /// [Todo]: Compute rewards amount
-        //oceanGovernanceToken.mint(msg.sender, rewardAmount);        
+        oceanLPToken.transfer(msg.sender, unStakedBPoolAmount);      
     }
 
 
@@ -96,8 +101,8 @@ contract OceanFarmingPool is OceanFarmingPoolStorages, OceanFarmingPoolEvents, O
     /**
      * @dev Adds a new lp to the pool. Can only be called by the owner. DO NOT add the same LP token more than once.
      * @param _allocPoint How many allocation points to assign to this pool.
-     * @param _lpToken Address of LP token contract. (BPool inherit IERC20)
-     * @param _withUpdate Whether to update all LP token contracts. Should be true if OceanGovernanceToken (OGToken) distribution has already begun.
+     * @param _lpToken Address of the Ocean LP token contract. (OceanLPTokens represents BPool & BToken)
+     * @param _withUpdate Whether to update all LP token contracts. Should be true if OceanGovernanceToken (OGC token) distribution has already begun.
      */
     function add(uint256 _allocPoint, IERC20 _lpToken, bool _withUpdate) public onlyOwner {
         if (_withUpdate) {
@@ -207,7 +212,7 @@ contract OceanFarmingPool is OceanFarmingPoolStorages, OceanFarmingPoolEvents, O
         }
         
         /// [Note]: Need to approve in advance
-        pool.lpToken.safeTransferFrom(address(msg.sender), address(this), _amount);  /// [Note]: LP token is BPT (Balancer Pool Token)
+        pool.lpToken.safeTransferFrom(address(msg.sender), address(this), _amount);  /// [Note]: LP token is the Ocean LP Tokens (OLP)
         user.amount = user.amount.add(_amount);
         user.rewardDebt = user.amount.mul(pool.accOceanGovernanceTokenPerShare).div(1e12);
         emit Deposit(msg.sender, _pid, _amount);
