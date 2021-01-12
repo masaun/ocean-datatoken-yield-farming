@@ -100,8 +100,8 @@ contract OceanFarmingPool is OceanFarmingPoolStorages, OceanFarmingPoolEvents, O
     /**
      * @dev Adds a new lp to the pool. Can only be called by the owner. DO NOT add the same LP token more than once.
      * @param _allocPoint How many allocation points to assign to this pool.
-     * @param _lpToken Address of LP token contract. (BPool inherit IERC20)
-     * @param _withUpdate Whether to update all LP token contracts. Should be true if OceanGovernanceToken (OGToken) distribution has already begun.
+     * @param _oceanLPToken Address of the Ocean LP token contract. (OceanLPTokens represents BPool & BToken)
+     * @param _withUpdate Whether to update all LP token contracts. Should be true if OceanGovernanceToken (OGC token) distribution has already begun.
      */
     function add(uint256 _allocPoint, IERC20 _oceanLPToken, bool _withUpdate) public onlyOwner {
         if (_withUpdate) {
@@ -110,7 +110,7 @@ contract OceanFarmingPool is OceanFarmingPoolStorages, OceanFarmingPoolEvents, O
         uint256 lastRewardBlock = block.number > startBlock ? block.number : startBlock;
         totalAllocPoint = totalAllocPoint.add(_allocPoint);
         poolInfo.push(PoolInfo({
-            lpToken: _lpToken,
+            lpToken: _oceanLPToken,
             allocPoint: _allocPoint,
             lastRewardBlock: lastRewardBlock,
             accOceanGovernanceTokenPerShare: 0
