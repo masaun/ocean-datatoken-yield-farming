@@ -305,7 +305,7 @@ contract("OceanFarmingPool", function(accounts) {
             await oceanLPToken.approve(OCEAN_FARMING_POOL, unStakedBTokenAmount, { from: user1 });
             
             /// [Note]: user1 un-stake 5 OLP (Ocean LP Tokens) at the advanced block number (the latest block number + 30 days (172800 seconds))
-            const _advancedBlock = Number(latestBlock) + 5760; /// [Note]: the latest block number plus block number of 1 day (5760=86400 seconds/15 seconds)
+            const _advancedBlock = Number(latestBlock) + 5760; /// [Note]: the latest block number plus block number of 1 day (5760 blocks = 86400 seconds / 15 seconds)
             const advancedBlock = String(_advancedBlock);
             console.log('\n=== advancedBlock ===', advancedBlock);  
             await time.advanceBlockTo(advancedBlock);
