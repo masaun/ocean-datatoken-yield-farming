@@ -273,6 +273,17 @@ contract("OceanFarmingPool", function(accounts) {
     });
 
     describe("OceanFarmingPool", () => {
+        it("Check totalSupply of the OceanGovernanceToken is still '0' before the Ocean-LP tokens (OLP) are staked", async () => {
+            let _totalSupply = await oceanGovernanceToken.totalSupply({ from: user1 }); 
+            let totalSupply = String(_totalSupply);
+            console.log('\n=== TotalSupply of the Ocean Governance Token (OGC) - before the Ocean-LP tokens (OLP) are staked ===', totalSupply);
+            assert.equal(
+                totalSupply,
+                "0",
+                "TotalSupply of the Ocean Governance Token (OGC) before the Ocean-LP tokens (OLP) are staked should be '0'"
+            );
+        });
+
         it("Stake BToken into OceanFarmingPool", async () => {
             /// [Note]: BToken is inherited into BPool. Therefore, BToken address is same with BPool address. (1 BPool has 1 BToken)
             const poolId = 0;  /// [Note]: Index number of the PoolInfo struct
