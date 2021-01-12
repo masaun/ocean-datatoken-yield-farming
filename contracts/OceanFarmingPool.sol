@@ -30,12 +30,12 @@ contract OceanFarmingPool is OceanFarmingPoolStorages, OceanFarmingPoolEvents, O
     using SafeMath for uint;
     using SafeERC20 for IERC20;
 
-    OceanLPToken public oceanLPToken;
+    IERC20 public oceanLPToken;
     OceanFarmingToken public oceanFarmingToken;
     OceanGovernanceToken public oceanGovernanceToken;
 
     constructor(
-        OceanLPToken _oceanLPToken,
+        IERC20 _oceanLPToken,
         OceanFarmingToken _oceanFarmingToken, 
         OceanGovernanceToken _oceanGovernanceToken, 
         uint _oceanGovernanceTokenPerBlock, 
@@ -56,7 +56,9 @@ contract OceanFarmingPool is OceanFarmingPoolStorages, OceanFarmingPoolEvents, O
      * @param _bPool - BPool (BToken) should be a pair of Ocean and DataToken
      **/
     //function stake(uint poolId, IERC20 _bPool, uint stakedBPoolAmount) public returns (bool) {
-    function stake(uint poolId, BPool _bPool, uint stakedBPoolAmount) public returns (bool) {
+    function stake(uint poolId, BPool _bPool, IERC20 _oceanLPToken, uint stakedBPoolAmount) public returns (bool) {
+        oceanLPToken.transferFrom(msg.sender, address(this), stakedBPoolAmount);
+
         //IERC20 bPool = _bPool;
         BPool bPool = _bPool;
         bPool.transferFrom(msg.sender, address(this), stakedBPoolAmount);
@@ -70,7 +72,7 @@ contract OceanFarmingPool is OceanFarmingPoolStorages, OceanFarmingPoolEvents, O
      * @notice - A user un-stake BPool
      * @param _bPool - BPool should be a pair of Ocean and DataToken
      **/
-    function unStake(uint poolId, BPool _bPool, uint unStakedBPoolAmount) public returns (bool) {
+    function unStake(uint poolId, BPool _bPool, IERC20 _oceanLPToken, uint unStakedBPoolAmount) public returns (bool) {
         withdraw(poolId, unStakedBPoolAmount);
 
         oceanFarmingToken.burn(msg.sender, unStakedBPoolAmount);
@@ -78,9 +80,7 @@ contract OceanFarmingPool is OceanFarmingPoolStorages, OceanFarmingPoolEvents, O
         BPool bPool = _bPool;
         bPool.transfer(msg.sender, unStakedBPoolAmount);
 
-        /// [Note]: 2 rows below may be replaced with the withdraw() method above.
-        //uint rewardAmount = _computeRewardAmount();  /// [Todo]: Compute rewards amount
-        //oceanGovernanceToken.mint(msg.sender, rewardAmount);        
+        oceanLPToken.transfer(msg.sender, unStakedBPoolAmount);      
     }
 
 
@@ -103,7 +103,7 @@ contract OceanFarmingPool is OceanFarmingPoolStorages, OceanFarmingPoolEvents, O
      * @param _lpToken Address of LP token contract. (BPool inherit IERC20)
      * @param _withUpdate Whether to update all LP token contracts. Should be true if OceanGovernanceToken (OGToken) distribution has already begun.
      */
-    function add(uint256 _allocPoint, IERC20 _lpToken, bool _withUpdate) public onlyOwner {
+    function add(uint256 _allocPoint, IERC20 _oceanLPToken, bool _withUpdate) public onlyOwner {
         if (_withUpdate) {
             massUpdatePools();
         }

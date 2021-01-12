@@ -106,13 +106,15 @@ contract("OceanFarmingPool", function(accounts) {
             console.log('\n=== advancedBlock (when the OceanFarmingPool contract is created) ===', advancedBlock);  
 
             /// [Note]: 100 per block farming rate starting at block 100 until block 1000
+            const _oceanLPToken = oceanLPToken.address;
             const _oceanFarmingToken = oceanFarmingToken.address;
             const _oceanGovernanceToken = oceanGovernanceToken.address;
             const _oceanGovernanceTokenPerBlock = 100;
             const _startBlock = latestBlock;
             const _endBlock = advancedBlock;
 
-            oceanFarmingPool = await OceanFarmingPool.new(_oceanFarmingToken, 
+            oceanFarmingPool = await OceanFarmingPool.new(_oceanLPToken , 
+                                                          _oceanFarmingToken, 
                                                           _oceanGovernanceToken, 
                                                           _oceanGovernanceTokenPerBlock, 
                                                           _startBlock, 
@@ -297,7 +299,7 @@ contract("OceanFarmingPool", function(accounts) {
             latestBlock = String(_latestBlock);        /// [Result]: e.g. 11624396
             console.log('\n=== latestBlock ===', latestBlock);    
             await time.advanceBlockTo(latestBlock);
-            await oceanFarmingPool.stake(poolId, OCEAN_LP_TOKEN, stakedBTokenAmount, { from: user1 });
+            await oceanFarmingPool.stake(poolId, POOL, OCEAN_LP_TOKEN, stakedBTokenAmount, { from: user1 });
 
             /// [Note]: Check totalSupply of the OceanGovernanceToken after the Ocean-LP tokens (OLP) are staked
             let _totalSupply = await oceanGovernanceToken.totalSupply({ from: user1 }); 
@@ -325,7 +327,7 @@ contract("OceanFarmingPool", function(accounts) {
             const advancedBlock = String(_advancedBlock);
             console.log('\n=== advancedBlock ===', advancedBlock);  
             await time.advanceBlockTo(advancedBlock);
-            await oceanFarmingPool.unStake(poolId, OCEAN_LP_TOKEN, unStakedBTokenAmount, { from: user1 });  /// [Result]: 
+            await oceanFarmingPool.unStake(poolId, POOL, OCEAN_LP_TOKEN, unStakedBTokenAmount, { from: user1 });  /// [Result]: 
         });
 
         it("Check pending OCG tokens (as rewards) amount", async () => {
