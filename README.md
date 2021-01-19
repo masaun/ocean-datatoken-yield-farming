@@ -83,6 +83,16 @@ $ npm run test:farming
 
 <br>
 
+***
+
+## 【Remaining tasks and next steps】
+- Additional implementation of the Ocean Governance Token (OGC) and governance structures (e.g. Community voting function by OGC token holders)
+- Add liquidity pool (balancer pool) for the Ocean Governance Token (OGC).
+- Implement the front-end (UI).
+
+
+&nbsp;
+
 
 ***
 
