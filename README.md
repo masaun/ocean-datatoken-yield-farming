@@ -1,7 +1,7 @@
 # Ocean DataToken Yield Farming
 
 ***
-## 【Introduction of the NFT Liquidity Mining with Ocean】
+## 【Introduction of the Ocean DataToken Yield Farming】
 - This is a smart contract for ocean's data-token yield farming by using liquidity mining approach.
 
 &nbsp;
